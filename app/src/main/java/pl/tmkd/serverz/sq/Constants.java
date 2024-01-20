@@ -1,0 +1,22 @@
+package pl.tmkd.serverz.sq;
+
+public class Constants {
+    private Constants(){}
+
+    public static final byte ID_INFO_RESP = 0x49;
+    public static final byte ID_PLAYER_RESP = 0x44;
+    public static final byte ID_RULES_RESP = 0x45;
+    public static final byte ID_PING_RESP = 0x6A;
+    public static final byte ID_INVALID_CHALLENGE = 0x41;
+    public static final byte ID_INFO_REQ = 0x54;
+    public static final byte ID_PLAYER_REQ = 0x55;
+    public static final byte ID_RULES_REQ = 0x56;
+    public static final byte ID_PING_REQ = 0x69;
+    public static final byte[] UNKNOWN_CHALLENGE_ID = "ÿÿÿÿ".getBytes();
+    public static final int TIMER_QUERY_GUARD = 5000;
+    public static final int TIMED_OUT_LIMIT = 10;
+    public static final int TIMER_QUERY_RETRY_SLOW = 10000;
+    public static final int TIMER_QUERY_RETRY_FAST = 5000;
+    public static final int INVALID_INDEX = 0xFFFFFFFF;
+    public static final String g_no3rdCamera = "no3rd";
+}

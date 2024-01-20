@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
+
+import pl.tmkd.serverz.sq.Server;
 
 public class MainActivity extends Activity {
     private View mainView;
@@ -18,6 +19,12 @@ public class MainActivity extends Activity {
         setContentView(mainView);
 
         textView = findViewById(R.id.textView);
-        textView.setText("Siemano");
+
+        try {
+            Server server = new Server("138.201.226.81", 27026);
+            textView.setText(server.getAddress());
+        } catch (Exception e) {
+            textView.setText(e.toString());
+        }
     }
 }
