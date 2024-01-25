@@ -2,14 +2,14 @@ package pl.tmkd.serverz.sq.msg;
 
 import static pl.tmkd.serverz.sq.msg.Utils.merge;
 
-public class Request extends Message {
-    public Request(byte header) {
-        super(header);
-        payload = merge(payload, new byte[]{ header });
+public class Request extends SourceQueryMessage {
+    public Request(byte id) {
+        super(id);
+        payload = merge(payload, new byte[]{ id });
     }
 
-    public Request(byte header, byte[] content) {
-        super(header);
+    public Request(byte id, byte[] content) {
+        this(id);
         payload = merge(payload, content);
     }
 }
