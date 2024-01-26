@@ -2,9 +2,13 @@ package pl.tmkd.serverz.sq.msg;
 
 import static pl.tmkd.serverz.sq.Constants.*;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.ByteBuffer;
+
 public class SourceQueryMessage {
-    protected byte id;
-    protected byte[] payload;
+    protected byte id = 0;
+    protected byte[] payload = null;
 
     public SourceQueryMessage() {}
 
@@ -29,6 +33,11 @@ public class SourceQueryMessage {
 
     public byte[] getPayload() {
         return payload;
+    }
+
+    @NotNull
+    public ByteBuffer getBuffer() {
+        return ByteBuffer.wrap(payload);
     }
 
     public int getSize() {

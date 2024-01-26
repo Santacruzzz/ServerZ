@@ -1,9 +1,11 @@
 package pl.tmkd.serverz.sq.msg;
 
-public class ParsedResponse {
-    protected final byte[] payload;
+import java.nio.ByteBuffer;
 
-    public ParsedResponse(byte[] payload) {
+public class ParsedResponse {
+    protected final ByteBuffer payload;
+
+    public ParsedResponse(ByteBuffer payload) {
         this.payload = payload;
     }
 }

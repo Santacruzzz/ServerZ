@@ -6,6 +6,10 @@ import java.net.DatagramPacket;
 
 public class Response extends SourceQueryMessage {
 
+    public Response() {
+        super();
+    }
+
     public Response(DatagramPacket packet) {
         byte[] receivedData = new byte[packet.getLength()];
         System.arraycopy(packet.getData(), 0, receivedData, 0, packet.getLength());

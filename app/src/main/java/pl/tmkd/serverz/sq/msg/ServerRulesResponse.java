@@ -1,7 +1,9 @@
 package pl.tmkd.serverz.sq.msg;
 
+import java.nio.ByteBuffer;
+
 public class ServerRulesResponse extends ParsedResponse {
-    public ServerRulesResponse(byte[] payload) {
+    public ServerRulesResponse(ByteBuffer payload) {
         super(payload);
     }
 }
