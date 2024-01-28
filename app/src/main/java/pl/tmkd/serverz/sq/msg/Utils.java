@@ -3,7 +3,10 @@ package pl.tmkd.serverz.sq.msg;
 import androidx.annotation.NonNull;
 
 import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -50,4 +53,25 @@ public class Utils {
         }
         return "";
     }
+
+    @NonNull
+    public static String formatDuration(Duration duration) {
+        long hours = duration.toHours();
+        long minutes = (duration.toMinutes() % 60);
+        long seconds = (duration.getSeconds() % 60);
+
+        ArrayList<String> result = new ArrayList<>();
+        if (hours > 0) {
+            result.add(String.format(Locale.getDefault(), "%dh", hours));
+        }
+        if (minutes > 0) {
+            result.add(String.format(Locale.getDefault(), "%dm", minutes));
+        }
+        if (seconds > 0) {
+            result.add(String.format(Locale.getDefault(), "%ds", seconds));
+        }
+
+        return String.join(" ", result);
+    }
+
 }

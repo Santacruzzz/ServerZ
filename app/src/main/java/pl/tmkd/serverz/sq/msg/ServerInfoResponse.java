@@ -1,11 +1,11 @@
 package pl.tmkd.serverz.sq.msg;
 
-import static pl.tmkd.serverz.sq.msg.Utils.*;
+import static pl.tmkd.serverz.sq.msg.Utils.getExtraValue;
+import static pl.tmkd.serverz.sq.msg.Utils.readString;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import pl.tmkd.serverz.sq.Constants;
 
@@ -33,27 +33,27 @@ public class ServerInfoResponse extends ParsedResponse {
     public ServerInfoResponse(ByteBuffer payload) {
         super(payload);
 
-        payload.position(5);
-        protocol = (short) (payload.get() & 0xFF);
-        name = readString(payload);
-        map = readString(payload);
-        gameFolder = readString(payload);
-        game = readString(payload);
-        gameId = payload.getShort() & 0xFFFF;
-        playersNum = (short) (payload.get() & 0xFF);
-        maxPlayers = (short) (payload.get() & 0xFF);
-        bots = (short) (payload.get() & 0xFF);
-        type = payload.get();
-        env = payload.get();
-        havePassword = payload.get() == 1;
-        haveVac = payload.get() == 1;
-        version = readString(payload);
+        this.payload.position(5);
+        protocol = (short) (this.payload.get() & 0xFF);
+        name = readString(this.payload);
+        map = readString(this.payload);
+        gameFolder = readString(this.payload);
+        game = readString(this.payload);
+        gameId = this.payload.getShort() & 0xFFFF;
+        playersNum = (short) (this.payload.get() & 0xFF);
+        maxPlayers = (short) (this.payload.get() & 0xFF);
+        bots = (short) (this.payload.get() & 0xFF);
+        type = this.payload.get();
+        env = this.payload.get();
+        havePassword = this.payload.get() == 1;
+        haveVac = this.payload.get() == 1;
+        version = readString(this.payload);
 
         final short dayzFlag = 0xb1;
-        short extraDataFlag = (short) (payload.get() & 0xFF);
+        short extraDataFlag = (short) (this.payload.get() & 0xFF);
         if (dayzFlag == extraDataFlag) {
-            payload.position(payload.position() + 10);
-            List<String> extraData = Arrays.asList(readString(payload).split(","));
+            this.payload.position(this.payload.position() + 10);
+            List<String> extraData = Arrays.asList(readString(this.payload).split(","));
 
             time = extraData.get(extraData.size() - 1);
             isFirstPerson = extraData.contains(Constants.NO_3RD_CAMERA);
@@ -73,10 +73,6 @@ public class ServerInfoResponse extends ParsedResponse {
 
     public String getVersion() {
         return version;
-    }
-
-    public String getPlayersAndMax() {
-        return String.format(Locale.US,"%d/%d", playersNum, maxPlayers);
     }
 
     public int getPlayersNum() {

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 import pl.tmkd.serverz.sq.msg.ParsedResponse;
 import pl.tmkd.serverz.sq.msg.Request;
@@ -59,7 +60,7 @@ public class SourceQueryTask implements Runnable {
                     listener.onServerInfoResponse(infoResp);
             }
         } catch (Exception e) {
-            Log.d(SQ_TAG, e.toString());
+            Log.e(SQ_TAG, e.toString() + Arrays.toString(e.getStackTrace()));
         }
     }
 

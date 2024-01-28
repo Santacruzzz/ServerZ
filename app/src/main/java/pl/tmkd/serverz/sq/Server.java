@@ -1,15 +1,24 @@
 package pl.tmkd.serverz.sq;
 
 import static pl.tmkd.serverz.sq.Constants.SQ_TAG;
+import static pl.tmkd.serverz.sq.Constants.SUNRISE_TIME;
+import static pl.tmkd.serverz.sq.Constants.SUNSET_TIME;
+import static pl.tmkd.serverz.sq.msg.Utils.formatDuration;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import pl.tmkd.serverz.sq.msg.Player;
 import pl.tmkd.serverz.sq.msg.ServerInfoResponse;
 import pl.tmkd.serverz.sq.msg.ServerPlayersResponse;
-import pl.tmkd.serverz.sq.msg.ServerRulesResponse;
 
 public class Server implements SqResponseListener {
     private final String ip;
@@ -23,16 +32,22 @@ public class Server implements SqResponseListener {
     private String version;
     private int playersNum;
     private int maxPlayers;
-    private String time;
+    private String serverTime;
     private boolean isFirstPerson;
     private float dayTimeMult;
     private float nightTimeMult;
     private int queueSize;
+    private String tillDayOrNightDuration;
+    private String dayDuration;
+    private String nightDuration;
+    private boolean isDaytime;
+    private Vector<Player> players;
 
     public Server(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        refreshServerDataTask = new SourceQueryTask(ip, port, false);
+        this.players = new Vector<Player>();
+        refreshServerDataTask = new SourceQueryTask(ip, port, true);
         refreshServerDataTask.setListener(this);
         executor = Executors.newSingleThreadExecutor();
         refreshServerData();
@@ -64,20 +79,51 @@ public class Server implements SqResponseListener {
             listener.onServerInfoRefreshed(this);
     }
 
-    private void store(ServerInfoResponse response) {
+    private void store(@NonNull ServerInfoResponse response) {
         name = response.getName();
         map = response.getMap();
         version = response.getVersion();
         playersNum = response.getPlayersNum();
         maxPlayers = response.getMaxPlayers();
-        time = response.getTime();
+        serverTime = response.getTime();
         isFirstPerson = response.isFirstPerson();
         dayTimeMult = response.getDayTimeMult();
         nightTimeMult = response.getNightTimeMult();
         queueSize = response.getQueueSize();
+        calculateTimeRelatedValues();
     }
 
-    private void store(ServerPlayersResponse playersResponse) {
+    private void store(@NonNull ServerPlayersResponse playersResponse) {
+        this.players = playersResponse.getPlayers();
+    }
+
+    private void calculateTimeRelatedValues()
+    {
+        if (!(dayTimeMult + nightTimeMult > 0)) {
+            Log.e(SQ_TAG, "Time factors are not valid, dayTimeMult: " + dayTimeMult + ", nightTimeMult: " + nightTimeMult);
+            return;
+        }
+
+        calculateDayAndNightDuration();
+
+        LocalTime serverTimeValue = LocalTime.parse(serverTime);
+        isDaytime = (serverTimeValue.isAfter(SUNRISE_TIME) || serverTimeValue == SUNRISE_TIME) && serverTimeValue.isBefore(SUNSET_TIME);
+    }
+
+    private void calculateDayAndNightDuration() {
+        long daytimeMinutes = ChronoUnit.MINUTES.between(SUNRISE_TIME, SUNSET_TIME);
+        long nighttimeMinutes = 24 * 60 - daytimeMinutes;
+
+        dayDuration = formatDuration(Duration.ofMinutes((long) (daytimeMinutes / dayTimeMult)));
+        nightDuration = formatDuration(Duration.ofMinutes((long) (nighttimeMinutes / (dayTimeMult * nightTimeMult))));
+    }
+
+    public boolean isDaytime() {
+        return isDaytime;
+    }
+
+    public Vector<Player> getPlayers() {
+        return players;
     }
 
     public String getAddress() {
@@ -104,23 +150,23 @@ public class Server implements SqResponseListener {
         return maxPlayers;
     }
 
-    public String getTime() {
-        return time;
+    public String getServerTime() {
+        return serverTime;
     }
 
     public boolean isFirstPerson() {
         return isFirstPerson;
     }
 
-    public float getDayTimeMult() {
-        return dayTimeMult;
-    }
-
-    public float getNightTimeMult() {
-        return nightTimeMult;
-    }
-
     public int getQueueSize() {
         return queueSize;
+    }
+
+    public String getDayDuration() {
+        return dayDuration;
+    }
+
+    public String getNightDuration() {
+        return nightDuration;
     }
 }
