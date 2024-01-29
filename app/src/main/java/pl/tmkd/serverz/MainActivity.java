@@ -1,9 +1,13 @@
 package pl.tmkd.serverz;
 
+import static pl.tmkd.serverz.sq.Constants.SQ_TAG;
+import static pl.tmkd.serverz.sq.msg.Utils.isServerNotInList;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,33 +19,34 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 import pl.tmkd.serverz.sq.Server;
+import pl.tmkd.serverz.sq.ServerListener;
 
 public class MainActivity extends Activity implements View.OnClickListener {
-    private TextView textView;
-    private View mainView;
     private ListView listView;
-    ArrayList<MyData> arrayList = new ArrayList<>();
     private MyAdapter adapter;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainView = getLayoutInflater().inflate(R.layout.layout_main, null);
+        View mainView = getLayoutInflater().inflate(R.layout.layout_main, null);
         setContentView(mainView);
-        listView = findViewById(R.id.idListView);
-
-        arrayList.add(new MyData("1", "Siemano"));
-        arrayList.add(new MyData("2", "Eluwina"));
-        arrayList.add(new MyData("3", "Siemanderkoo"));
-
+        ArrayList<Server> arrayList = new ArrayList<>();
         adapter = new MyAdapter(this, arrayList);
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        Button button = (Button) findViewById(R.id.button);
+        listView = findViewById(R.id.idListView);
+        EditText editTextIp = findViewById(R.id.editTextIp);
+        EditText editTextPort = findViewById(R.id.editTextPort);
 
-//        button.setOnClickListener(v -> {
-//
-//        });
+       button.setOnClickListener(v -> {
+           Server server = new Server(editTextIp.getText().toString(), Integer.parseInt(editTextPort.getText().toString()));
+           if (isServerNotInList(arrayList, server)) {
+               server.setListener(adapter);
+               arrayList.add(server);
+               listView.setAdapter(adapter);
+               adapter.notifyDataSetChanged();
+           }
+       });
 
         try {
             Server server = new Server("138.201.226.81", 27026);

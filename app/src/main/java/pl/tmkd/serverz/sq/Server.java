@@ -97,8 +97,7 @@ public class Server implements SqResponseListener {
         this.players = playersResponse.getPlayers();
     }
 
-    private void calculateTimeRelatedValues()
-    {
+    private void calculateTimeRelatedValues() {
         if (!(dayTimeMult + nightTimeMult > 0)) {
             Log.e(SQ_TAG, "Time factors are not valid, dayTimeMult: " + dayTimeMult + ", nightTimeMult: " + nightTimeMult);
             return;

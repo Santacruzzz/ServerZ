@@ -4,26 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     tools:ignore="UselessParent">
 
+
     <TextView
-        android:id="@+id/idServer"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/id"
+        android:text="@string/address"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
         tools:ignore="RtlHardcoded" />
 
     <TextView
-        android:id="@+id/greet"
+        android:id="@+id/playersNum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/greet"
+        android:text="@string/playersNum"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:ignore="RtlHardcoded" />
+
+    <TextView
+        android:id="@+id/maxPlayers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/maxPlayers"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"

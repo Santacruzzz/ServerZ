@@ -7,7 +7,10 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import pl.tmkd.serverz.sq.Server;
 
 public class Utils {
 
@@ -74,4 +77,11 @@ public class Utils {
         return String.join(" ", result);
     }
 
+    public static boolean isServerNotInList(ArrayList<Server> servers, Server server) {
+        for (Server item : servers) {
+            if (Objects.equals(item.getAddress(), server.getAddress())) {
+                return false;
+            }
+        }return true;
+    }
 }

@@ -9,10 +9,44 @@
 
     <ListView
         android:id="@+id/idListView"
-        android:layout_width="451dp"
-        android:layout_height="701dp"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:layout_width="match_parent"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="9dp"
         tools:layout_editor_absoluteY="119dp" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <EditText
+            android:id="@+id/editTextIp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:inputType="text"
+            android:autofillHints=""
+            android:hint="@string/ip"
+            android:textColor="@android:color/white"
+            tools:ignore="LabelFor" />
+
+        <EditText
+            android:id="@+id/editTextPort"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:hint="@string/port"
+            android:textColor="@android:color/white"
+            tools:ignore="LabelFor" />
+
+    </TableRow>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:text="@string/add_server"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
