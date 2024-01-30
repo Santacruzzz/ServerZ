@@ -79,7 +79,7 @@ public class Utils {
 
     public static boolean isServerNotInList(ArrayList<Server> servers, Server server) {
         for (Server item : servers) {
-            if (Objects.equals(item.getAddress(), server.getAddress())) {
+            if (Objects.equals(item.getIp(), server.getIp())) {
                 return false;
             }
         }return true;
