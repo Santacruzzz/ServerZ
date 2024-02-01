@@ -27,7 +27,6 @@ public class ServerPlayersResponse extends ParsedResponse {
             player.setScore((int) (this.payload.getInt() & 0xFFFF));
             player.setDuration((float) (this.payload.order(LITTLE_ENDIAN).getFloat()));
             this.players.add(player);
-            Log.d(SQ_TAG, " - added player: " + player.toString());
         }
     }
 

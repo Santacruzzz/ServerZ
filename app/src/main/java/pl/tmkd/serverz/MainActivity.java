@@ -47,6 +47,20 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         listView.setOnItemClickListener(this);
         button.setOnClickListener(this);
         listView.setAdapter(adapter);
+
+        addTestServers();
+    }
+
+    private void addTestServers() {
+        Server testServer = new Server("138.201.226.81", 27026);
+        testServer.setListener(adapter);
+        arrayList.add(testServer);
+        testServer.start();
+
+        Server testServer2 = new Server("185.207.214.32", 2307);
+        testServer2.setListener(adapter);
+        arrayList.add(testServer2);
+        testServer2.start();
     }
 
     @Override

@@ -36,6 +36,7 @@ public class SecondActivity extends Activity implements ServerListener {
         createPlayersAdapter();
         server = new Server(ip, port);
         server.setListener(this);
+        server.start();
     }
     public void createPlayersAdapter() {
         ArrayList<String> items = new ArrayList<>();

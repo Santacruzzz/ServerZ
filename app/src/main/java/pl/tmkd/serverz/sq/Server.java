@@ -5,6 +5,8 @@ import static pl.tmkd.serverz.sq.Constants.SUNRISE_TIME;
 import static pl.tmkd.serverz.sq.Constants.SUNSET_TIME;
 import static pl.tmkd.serverz.sq.msg.Utils.formatDuration;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -20,7 +22,7 @@ import pl.tmkd.serverz.sq.msg.Player;
 import pl.tmkd.serverz.sq.msg.ServerInfoResponse;
 import pl.tmkd.serverz.sq.msg.ServerPlayersResponse;
 
-public class Server implements SqResponseListener {
+public class Server implements SqResponseListener, Runnable{
     private final String ip;
     private final int port;
     private final ExecutorService executor;
@@ -42,6 +44,7 @@ public class Server implements SqResponseListener {
     private String nightDuration;
     private boolean isDaytime;
     private Vector<Player> players;
+    private final Handler refreshHandler;
 
     public Server(String ip, int port) {
         this.ip = ip;
@@ -50,7 +53,16 @@ public class Server implements SqResponseListener {
         refreshServerDataTask = new SourceQueryTask(ip, port, true);
         refreshServerDataTask.setListener(this);
         executor = Executors.newSingleThreadExecutor();
+        refreshHandler = new Handler(Looper.getMainLooper());
+    }
+
+    public void start() {
         refreshServerData();
+        refreshHandler.postDelayed(this, 5000);
+    }
+
+    public void stop() {
+        refreshHandler.removeCallbacks(this);
     }
 
     public void setListener(ServerListener listener) {
@@ -59,7 +71,6 @@ public class Server implements SqResponseListener {
 
     private void refreshServerData() {
         executor.execute(refreshServerDataTask);
-        executor.shutdown();
     }
 
     @Override
@@ -77,6 +88,12 @@ public class Server implements SqResponseListener {
         store(playersResponse);
         if (null != listener)
             listener.onServerInfoRefreshed(this);
+    }
+
+    @Override
+    public void run() {
+        refreshServerData();
+        refreshHandler.postDelayed(this, 5000);
     }
 
     private void store(@NonNull ServerInfoResponse response) {
