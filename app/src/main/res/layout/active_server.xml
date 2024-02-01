@@ -1,57 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0D1423"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ExtraText">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/serverName"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center"
-        android:text="@string/server_name"
         android:textColor="#F4F5F9"
         android:textSize="20sp" />
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TableLayout
+        android:stretchColumns="*"
+        android:layout_weight="3"
+        android:layout_height="0dp"
+        android:layout_width="match_parent">
+        <TableRow
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="2">
+            <TextView
+                android:id="@id/amountOfPlayers"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:textColor="#FEFEFE"
+                android:textSize="20sp"
+                android:padding="3dip" />
+            <TextView
+                android:id="@id/dayDuration"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:textColor="#FEFEFE"
+                android:textSize="20sp"
+                android:padding="3dip" />
+        </TableRow>
 
-        <TextView
-            android:layout_height="188dp"
-            android:layout_weight="1"
-            android:background="#0D1423"
-            android:gravity="center"
-            android:padding="20dip"
-            android:text="@string/amount_of_players_on_the_server"
-            android:textColor="#F4F5F9"
-            android:textSize="20sp" />
-
-        <TextView
-            android:layout_height="188dp"
-            android:layout_weight="1"
-            android:background="#0D1423"
-            android:gravity="center"
-            android:padding="20dip"
-            android:text="@string/number_of_hours_until_night"
-            android:textColor="#FEFEFE"
-            android:textSize="20sp" />
-
-    </TableRow>
+        <TableRow
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2">
+            <TextView
+                android:id="@id/serverTime"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:textColor="#FEFEFE"
+                android:textSize="20sp"
+                android:padding="3dip" />
+            <TextView
+                android:id="@id/nightDuration"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:textColor="#FEFEFE"
+                android:textSize="20sp"
+                android:padding="3dip" />
+        </TableRow>
+    </TableLayout>
 
     <ProgressBar
         android:id="@+id/progressBar2"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
         android:background="#0D1423"
         android:progressTint="#135070" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/players"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="#0D1423"
         android:gravity="center"
         android:text="@string/players"
@@ -61,9 +85,10 @@
         android:textStyle="bold" />
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@+id/listOfPlayers"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="7"
         android:background="#0D1423"
         android:visibility="visible">
 

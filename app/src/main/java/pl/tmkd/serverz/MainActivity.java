@@ -30,7 +30,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ListView listView;
     private MyAdapter adapter;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +44,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         addServerToList(arrayList, button, editTextIp, editTextPort);
 
-        openMoreInfoAboutServer();
+        openMoreInfoAboutServer(arrayList);
     }
 
-    public void openMoreInfoAboutServer() {
+    public void openMoreInfoAboutServer(ArrayList<Server> arrayList) {
         listView.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+            intent.putExtra("ip", arrayList.get(position).getIp());
+            intent.putExtra("port", arrayList.get(position).getPort());
             startActivity(intent);
         });
     }

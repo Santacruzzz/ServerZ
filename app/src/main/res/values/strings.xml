@@ -23,4 +23,9 @@
     <string name="ip">IP</string>
     <string name="port">PORT</string>
     <string name="add_server">Add server</string>
+    <string name="amountofplayers">amountOfPlayers</string>
+    <string name="servertime">serverTime</string>
+    <string name="amountOfPlayers" />
+    <string name="serverTime" />
+    <string name="jakis_tekst">jakis tekst</string>
 </resources>
