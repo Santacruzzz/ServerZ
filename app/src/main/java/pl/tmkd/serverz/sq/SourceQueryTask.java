@@ -12,15 +12,14 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 import pl.tmkd.serverz.sq.msg.ParsedResponse;
 import pl.tmkd.serverz.sq.msg.Request;
 import pl.tmkd.serverz.sq.msg.Response;
 import pl.tmkd.serverz.sq.msg.ServerInfoResponse;
 import pl.tmkd.serverz.sq.msg.ServerPlayersResponse;
-import pl.tmkd.serverz.sq.msg.ServerRulesResponse;
 
 public class SourceQueryTask implements Runnable {
     private final Request a2sInfo;
@@ -49,6 +48,7 @@ public class SourceQueryTask implements Runnable {
 
     @Override
     public void run() {
+        retries = 0;
         try {
             socket = new DatagramSocket();
             ServerInfoResponse infoResp = (ServerInfoResponse) handleResponse(sendRequest(a2sInfo));
@@ -61,7 +61,7 @@ public class SourceQueryTask implements Runnable {
                     listener.onServerInfoResponse(infoResp);
             }
         } catch (Exception e) {
-            Log.e(SQ_TAG, e.toString() + Arrays.toString(e.getStackTrace()));
+            Log.e(TAG_SQ, e + " : " + Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -78,11 +78,12 @@ public class SourceQueryTask implements Runnable {
     @NonNull
     private Response sendRequest(@NonNull Request request) throws IOException {
         if (null == socket) {
-            Log.e(SQ_TAG, "Socket not initialized. Returning default Response()");
+            Log.e(TAG_SQ, "[" + address + "] " + "Socket not initialized. Returning default Response()");
             return new Response();
         }
         if (retries >= 3) {
-            Log.e(SQ_TAG, "Max retries limit reached.");
+            Log.e(TAG_SQ, "[" + address + "] " + "Max retries limit reached.");
+            listener.onServerRetryLimitReached();
             return new Response();
         }
         DatagramPacket packetToSend = new DatagramPacket(request.getPayload(), request.getSize(), address);
@@ -92,17 +93,24 @@ public class SourceQueryTask implements Runnable {
         }
 
         socket.send(packetToSend);
-        Log.d(SQ_TAG, "Request " + request.getName() + " sent");
+        Log.d(TAG_SQ, "[" + address + "] " + "Request " + request.getName() + " sent");
 
         byte[] buf = new byte[2048];
         DatagramPacket receivedPacket = new DatagramPacket(buf, 2048);
-        socket.receive(receivedPacket);
+        socket.setSoTimeout(3000);
+        try {
+            socket.receive(receivedPacket);
+        } catch (SocketTimeoutException e) {
+            retries ++;
+            Log.w(TAG_SQ, "[" + address + "] " + "Timeout, retrying... (" + retries + ")");
+            return sendRequest(request);
+        }
         Response response = new Response(receivedPacket);
-        Log.d(SQ_TAG, response.getName() + " received, size: " + receivedPacket.getLength() + " bytes");
+        Log.d(TAG_SQ, "[" + address + "] " + response.getName() + " received, size: " + receivedPacket.getLength() + " bytes");
 
         if (response.isNewChallengeIdNeeded()) {
             retries ++;
-            Log.w(SQ_TAG, "New challenge needed. Updating new ID and resending the " + request.getName());
+            Log.w(TAG_SQ, "[" + address + "]" + " New challenge needed. Updating new ID and resending the " + request.getName());
             challengeId = right(response.getPayload(), 4);
             return sendRequest(request);
         }

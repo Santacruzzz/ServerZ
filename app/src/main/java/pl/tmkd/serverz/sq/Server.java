@@ -1,6 +1,6 @@
 package pl.tmkd.serverz.sq;
 
-import static pl.tmkd.serverz.sq.Constants.SQ_TAG;
+import static pl.tmkd.serverz.sq.Constants.TAG_SERVER;
 import static pl.tmkd.serverz.sq.Constants.SUNRISE_TIME;
 import static pl.tmkd.serverz.sq.Constants.SUNSET_TIME;
 import static pl.tmkd.serverz.sq.msg.Utils.formatDuration;
@@ -14,9 +14,11 @@ import androidx.annotation.NonNull;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import pl.tmkd.serverz.sq.msg.Player;
 import pl.tmkd.serverz.sq.msg.ServerInfoResponse;
@@ -45,6 +47,7 @@ public class Server implements SqResponseListener, Runnable{
     private boolean isDaytime;
     private Vector<Player> players;
     private final Handler refreshHandler;
+    private boolean started;
 
     public Server(String ip, int port) {
         this.ip = ip;
@@ -54,14 +57,18 @@ public class Server implements SqResponseListener, Runnable{
         refreshServerDataTask.setListener(this);
         executor = Executors.newSingleThreadExecutor();
         refreshHandler = new Handler(Looper.getMainLooper());
+        started = false;
     }
 
     public void start() {
+        started = true;
+        Log.d(TAG_SERVER, getAddress() + " :: Started");
         refreshServerData();
-        refreshHandler.postDelayed(this, 5000);
     }
 
     public void stop() {
+        started = false;
+        Log.d(TAG_SERVER, getAddress() + " :: Removing callbacks (has one? " + refreshHandler.hasCallbacks(this) + ")");
         refreshHandler.removeCallbacks(this);
     }
 
@@ -75,25 +82,39 @@ public class Server implements SqResponseListener, Runnable{
 
     @Override
     public void onServerInfoResponse(ServerInfoResponse response) {
-        Log.d(SQ_TAG, "onServerInfoResponse");
+        Log.d(TAG_SERVER, getAddress() + " :: onServerInfoResponse");
         store(response);
+        refreshHandler.postDelayed(this, 10000);
+
         if (null != listener)
             listener.onServerInfoRefreshed(this);
     }
 
     @Override
     public void onServerInfoAndPlayersResponse(ServerInfoResponse infoResponse, ServerPlayersResponse playersResponse) {
-        Log.d(SQ_TAG, "onServerInfoAndPlayersResponse");
+        Log.d(TAG_SERVER, getAddress() + " :: onServerInfoAndPlayersResponse");
         store(infoResponse);
         store(playersResponse);
+        refreshHandler.postDelayed(this, 10000);
+
         if (null != listener)
             listener.onServerInfoRefreshed(this);
     }
 
     @Override
+    public void onServerRetryLimitReached() {
+        Log.d(TAG_SERVER, getAddress() + " :: onServerRetryLimitReached");
+        stop();
+    }
+
+    @Override
     public void run() {
-        refreshServerData();
-        refreshHandler.postDelayed(this, 5000);
+        if (started) {
+            Log.d(TAG_SERVER, getAddress() + " :: run() : Refreshing server data");
+            refreshServerData();
+        } else {
+            Log.d(TAG_SERVER, getAddress() + " :: run() prevented, server stopped");
+        }
     }
 
     private void store(@NonNull ServerInfoResponse response) {
@@ -116,7 +137,7 @@ public class Server implements SqResponseListener, Runnable{
 
     private void calculateTimeRelatedValues() {
         if (!(dayTimeMult + nightTimeMult > 0)) {
-            Log.e(SQ_TAG, "Time factors are not valid, dayTimeMult: " + dayTimeMult + ", nightTimeMult: " + nightTimeMult);
+            Log.e(TAG_SERVER, getAddress() + " :: Time factors are not valid, dayTimeMult: " + dayTimeMult + ", nightTimeMult: " + nightTimeMult);
             return;
         }
 
@@ -138,8 +159,8 @@ public class Server implements SqResponseListener, Runnable{
         return isDaytime;
     }
 
-    public Vector<Player> getPlayers() {
-        return players;
+    public List<String> getPlayers() {
+        return players.stream().map(Player::getPlaytime).collect(Collectors.toList());
     }
 
     public String getAddress() {

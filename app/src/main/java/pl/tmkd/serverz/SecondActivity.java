@@ -1,12 +1,8 @@
 package pl.tmkd.serverz;
 
-import static pl.tmkd.serverz.sq.Constants.SQ_TAG;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -16,7 +12,6 @@ import java.util.ArrayList;
 
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerListener;
-import pl.tmkd.serverz.sq.msg.Player;
 
 public class SecondActivity extends Activity implements ServerListener {
     private View view;
@@ -38,6 +33,7 @@ public class SecondActivity extends Activity implements ServerListener {
         server.setListener(this);
         server.start();
     }
+
     public void createPlayersAdapter() {
         ArrayList<String> items = new ArrayList<>();
 
@@ -59,16 +55,19 @@ public class SecondActivity extends Activity implements ServerListener {
         serverTime.setText(server.getServerTime());
         dayDuration.setText(server.getDayDuration());
         nightDuration.setText(server.getNightDuration());
-
     }
 
     @Override
     public void onServerInfoRefreshed(Server server2) {
-        updateServerInfo();
-        ArrayList<String> items = new ArrayList<>();
-        for (Player player : server.getPlayers()) {
-            items.add(player.getPlaytime());
-        }
-        itemsAdapter.addAll(items);
+        runOnUiThread(() -> {
+            updateServerInfo();
+            itemsAdapter.clear();
+            itemsAdapter.addAll(server.getPlayers());
+        });
+    }
+
+    @Override
+    public void onServerInfoRefreshFailed(Server server) {
+        // TODO
     }
 }

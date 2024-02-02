@@ -1,7 +1,7 @@
 package pl.tmkd.serverz.sq.msg;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static pl.tmkd.serverz.sq.Constants.SQ_TAG;
+import static pl.tmkd.serverz.sq.Constants.TAG_SQ;
 import static pl.tmkd.serverz.sq.msg.Utils.readString;
 
 import android.util.Log;
@@ -19,7 +19,7 @@ public class ServerPlayersResponse extends ParsedResponse {
         this.payload.position(4);
         short numOfPlayers = (short) (this.payload.getShort() & 0xFF);
 
-        Log.d(SQ_TAG, "numOfPlayers: " + numOfPlayers);
+        Log.d(TAG_SQ, "numOfPlayers: " + numOfPlayers);
         for (short i = 0; i < numOfPlayers; ++i) {
             Player player = new Player();
             player.setId((short) (this.payload.get() & 0xFF));

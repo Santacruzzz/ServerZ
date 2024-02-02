@@ -41,7 +41,8 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
     @SuppressLint({"ViewHolder", "SetTextI18n"})
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = LayoutInflater.from(context).inflate(R.layout.server_item, parent, false);
+        if (null == convertView)
+            convertView = LayoutInflater.from(context).inflate(R.layout.server_item, parent, false);
         TextView playersNum = convertView.findViewById(R.id.playersNum);
         TextView maxPlayers = convertView.findViewById(R.id.maxPlayers);
         TextView name = convertView.findViewById(R.id.name);
@@ -55,5 +56,10 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
     @Override
     public void onServerInfoRefreshed(Server server) {
         ((Activity)context).runOnUiThread(this::notifyDataSetChanged);
+    }
+
+    @Override
+    public void onServerInfoRefreshFailed(Server server) {
+        // TODO
     }
 }

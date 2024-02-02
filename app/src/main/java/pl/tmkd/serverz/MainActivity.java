@@ -1,30 +1,24 @@
 package pl.tmkd.serverz;
 
-import static pl.tmkd.serverz.sq.Constants.SQ_TAG;
+import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
+import static pl.tmkd.serverz.sq.Constants.TAG_SQ;
 import static pl.tmkd.serverz.sq.msg.Utils.isServerNotInList;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import pl.tmkd.serverz.sq.Server;
-import pl.tmkd.serverz.sq.ServerListener;
 
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
     private ListView listView;
@@ -77,12 +71,13 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             Server server = new Server(editTextIp.getText().toString(), Integer.parseInt(editTextPort.getText().toString()));
             if (isServerNotInList(arrayList, server)) {
                 server.setListener(adapter);
+                server.start();
                 arrayList.add(server);
                 adapter.notifyDataSetChanged();
             }
         }
         catch (NumberFormatException e) {
-            Log.e(SQ_TAG, "Incorrect data");
+            Log.e(TAG_MAIN, "Incorrect data");
         }
     }
 }

@@ -21,7 +21,9 @@ public class Constants {
     public static final int TIMER_QUERY_RETRY_FAST = 5000;
     public static final int INVALID_INDEX = 0xFFFFFFFF;
     public static final String NO_3RD_CAMERA = "no3rd";
-    public static final String SQ_TAG = "tmkd-sq";
+    public static final String TAG_SQ = "tmkd-sq";
+    public static final String TAG_SERVER = "tmkd-server";
+    public static final String TAG_MAIN = "tmkd-activity";
     public static final LocalTime SUNRISE_TIME = LocalTime.of(5, 0, 0);
     public static final LocalTime SUNSET_TIME = LocalTime.of(19, 0, 0);
 }

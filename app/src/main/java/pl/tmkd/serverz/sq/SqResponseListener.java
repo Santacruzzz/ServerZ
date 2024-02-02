@@ -7,4 +7,5 @@ import pl.tmkd.serverz.sq.msg.ServerRulesResponse;
 public interface SqResponseListener {
     void onServerInfoResponse(ServerInfoResponse infoResponse);
     void onServerInfoAndPlayersResponse(ServerInfoResponse infoResponse, ServerPlayersResponse playersResponse);
+    void onServerRetryLimitReached();
 }
