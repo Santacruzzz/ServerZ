@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerListener;
 
@@ -29,7 +30,7 @@ public class SecondActivity extends Activity implements ServerListener {
         int port = intent.getIntExtra("port", 0);
 
         createPlayersAdapter();
-        server = new Server(ip, port);
+        server = new Server(ip, port, RefreshType.FULL);
         server.setListener(this);
         server.start();
     }

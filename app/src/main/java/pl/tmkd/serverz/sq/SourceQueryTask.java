@@ -30,16 +30,16 @@ public class SourceQueryTask implements Runnable {
     private DatagramSocket socket = null;
     private byte[] challengeId;
     private int retries;
-    private final boolean fullRefresh;
+    private final RefreshType refreshType;
 
-    public SourceQueryTask(String ip, int port, boolean fullRefresh) {
+    public SourceQueryTask(String ip, int port, RefreshType refreshType) {
         a2sInfo = new Request(ID_INFO_REQ, "Source Engine Query\0".getBytes());
         a2sPlayer = new Request(ID_PLAYER_REQ);
         a2sRules = new Request(ID_RULES_REQ);
         address = new InetSocketAddress(ip, port);
         challengeId = null;
         retries = 0;
-        this.fullRefresh = fullRefresh;
+        this.refreshType = refreshType;
     }
 
     public void setListener(SqResponseListener listener) {
@@ -52,7 +52,7 @@ public class SourceQueryTask implements Runnable {
         try {
             socket = new DatagramSocket();
             ServerInfoResponse infoResp = (ServerInfoResponse) handleResponse(sendRequest(a2sInfo));
-            if (fullRefresh) {
+            if (refreshType.equals(RefreshType.FULL)) {
                 ServerPlayersResponse playerResp = (ServerPlayersResponse) handleResponse(sendRequest(a2sPlayer));
                 if (null != listener)
                     listener.onServerInfoAndPlayersResponse(infoResp, playerResp);
@@ -97,7 +97,7 @@ public class SourceQueryTask implements Runnable {
 
         byte[] buf = new byte[2048];
         DatagramPacket receivedPacket = new DatagramPacket(buf, 2048);
-        socket.setSoTimeout(3000);
+        socket.setSoTimeout(TIMER_QUERY_GUARD);
         try {
             socket.receive(receivedPacket);
         } catch (SocketTimeoutException e) {
@@ -111,7 +111,7 @@ public class SourceQueryTask implements Runnable {
         if (response.isNewChallengeIdNeeded()) {
             retries ++;
             Log.w(TAG_SQ, "[" + address + "]" + " New challenge needed. Updating new ID and resending the " + request.getName());
-            challengeId = right(response.getPayload(), 4);
+            challengeId = right(response.getPayload(), CHALLENGE_ID_LENGTH);
             return sendRequest(request);
         }
         retries = 0;

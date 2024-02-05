@@ -1,8 +1,10 @@
 package pl.tmkd.serverz.sq;
 
-import static pl.tmkd.serverz.sq.Constants.TAG_SERVER;
 import static pl.tmkd.serverz.sq.Constants.SUNRISE_TIME;
 import static pl.tmkd.serverz.sq.Constants.SUNSET_TIME;
+import static pl.tmkd.serverz.sq.Constants.TAG_SERVER;
+import static pl.tmkd.serverz.sq.Constants.TIMER_QUERY_RETRY_FAST;
+import static pl.tmkd.serverz.sq.Constants.TIMER_QUERY_RETRY_SLOW;
 import static pl.tmkd.serverz.sq.msg.Utils.formatDuration;
 
 import android.os.Handler;
@@ -36,33 +38,38 @@ public class Server implements SqResponseListener, Runnable{
     private String version;
     private int playersNum;
     private int maxPlayers;
-    private String serverTime;
+    private LocalTime serverTime;
     private boolean isFirstPerson;
     private float dayTimeMult;
     private float nightTimeMult;
     private int queueSize;
-    private String tillDayOrNightDuration;
+    private String tillSunsetOrSunrise;
     private String dayDuration;
     private String nightDuration;
     private boolean isDaytime;
     private Vector<Player> players;
     private final Handler refreshHandler;
     private boolean started;
+    private boolean refreshFailed;
+    private final int refreshTimer;
+    private long ingameMinutesToSunriseOrSunset;
 
-    public Server(String ip, int port) {
+    public Server(String ip, int port, RefreshType refreshType) {
         this.ip = ip;
         this.port = port;
-        this.players = new Vector<Player>();
-        refreshServerDataTask = new SourceQueryTask(ip, port, true);
+        players = new Vector<>();
+        refreshServerDataTask = new SourceQueryTask(ip, port, refreshType);
         refreshServerDataTask.setListener(this);
         executor = Executors.newSingleThreadExecutor();
         refreshHandler = new Handler(Looper.getMainLooper());
         started = false;
+        refreshFailed = false;
+        refreshTimer = refreshType.equals(RefreshType.FULL) ? TIMER_QUERY_RETRY_FAST : TIMER_QUERY_RETRY_SLOW;
     }
 
     public void start() {
         started = true;
-        Log.d(TAG_SERVER, getAddress() + " :: Started");
+        Log.d(TAG_SERVER, getAddress() + " :: Started, refreshTimer: " + refreshTimer);
         refreshServerData();
     }
 
@@ -84,7 +91,7 @@ public class Server implements SqResponseListener, Runnable{
     public void onServerInfoResponse(ServerInfoResponse response) {
         Log.d(TAG_SERVER, getAddress() + " :: onServerInfoResponse");
         store(response);
-        refreshHandler.postDelayed(this, 10000);
+        refreshHandler.postDelayed(this, refreshTimer);
 
         if (null != listener)
             listener.onServerInfoRefreshed(this);
@@ -95,7 +102,7 @@ public class Server implements SqResponseListener, Runnable{
         Log.d(TAG_SERVER, getAddress() + " :: onServerInfoAndPlayersResponse");
         store(infoResponse);
         store(playersResponse);
-        refreshHandler.postDelayed(this, 10000);
+        refreshHandler.postDelayed(this, refreshTimer);
 
         if (null != listener)
             listener.onServerInfoRefreshed(this);
@@ -103,8 +110,11 @@ public class Server implements SqResponseListener, Runnable{
 
     @Override
     public void onServerRetryLimitReached() {
+        refreshFailed = true;
         Log.d(TAG_SERVER, getAddress() + " :: onServerRetryLimitReached");
         stop();
+        if (null != listener)
+            listener.onServerInfoRefreshFailed(this);
     }
 
     @Override
@@ -113,17 +123,19 @@ public class Server implements SqResponseListener, Runnable{
             Log.d(TAG_SERVER, getAddress() + " :: run() : Refreshing server data");
             refreshServerData();
         } else {
-            Log.d(TAG_SERVER, getAddress() + " :: run() prevented, server stopped");
+            Log.w(TAG_SERVER, getAddress() + " :: run() prevented, server stopped");
         }
     }
 
     private void store(@NonNull ServerInfoResponse response) {
+        refreshFailed = false;
+
         name = response.getName();
         map = response.getMap();
         version = response.getVersion();
         playersNum = response.getPlayersNum();
         maxPlayers = response.getMaxPlayers();
-        serverTime = response.getTime();
+        serverTime = LocalTime.parse(response.getTime());
         isFirstPerson = response.isFirstPerson();
         dayTimeMult = response.getDayTimeMult();
         nightTimeMult = response.getNightTimeMult();
@@ -136,15 +148,37 @@ public class Server implements SqResponseListener, Runnable{
     }
 
     private void calculateTimeRelatedValues() {
-        if (!(dayTimeMult + nightTimeMult > 0)) {
+        if (dayTimeMult * nightTimeMult == 0) {
             Log.e(TAG_SERVER, getAddress() + " :: Time factors are not valid, dayTimeMult: " + dayTimeMult + ", nightTimeMult: " + nightTimeMult);
             return;
         }
 
+        setDayOrNightTime();
         calculateDayAndNightDuration();
+        calculateMinutesTillSunsetOrSunrise();
 
-        LocalTime serverTimeValue = LocalTime.parse(serverTime);
-        isDaytime = (serverTimeValue.isAfter(SUNRISE_TIME) || serverTimeValue == SUNRISE_TIME) && serverTimeValue.isBefore(SUNSET_TIME);
+        Log.d(TAG_SERVER, getAddress() + " :: Server time: " + serverTime
+                + ", in game till day/night: " + formatDuration(Duration.ofMinutes(ingameMinutesToSunriseOrSunset))
+                + ", real: " + tillSunsetOrSunrise);
+
+        Log.d(TAG_SERVER, getAddress() + " :: progress: " + getDayOrNightProgress());
+    }
+
+    private void calculateMinutesTillSunsetOrSunrise() {
+        ingameMinutesToSunriseOrSunset = ChronoUnit.MINUTES.between(serverTime, SUNSET_TIME);
+        tillSunsetOrSunrise = formatDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / dayTimeMult)));
+        if (!isDaytime()) {
+            ingameMinutesToSunriseOrSunset = 0;
+            if (serverTime.isBefore(LocalTime.MIDNIGHT)) {
+                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, LocalTime.MIDNIGHT);
+            }
+            ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, SUNRISE_TIME);
+            tillSunsetOrSunrise = formatDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / (dayTimeMult * nightTimeMult))));
+        }
+    }
+
+    private void setDayOrNightTime() {
+        isDaytime = (serverTime.isAfter(SUNRISE_TIME) || serverTime == SUNRISE_TIME) && serverTime.isBefore(SUNSET_TIME);
     }
 
     private void calculateDayAndNightDuration() {
@@ -192,7 +226,7 @@ public class Server implements SqResponseListener, Runnable{
     }
 
     public String getServerTime() {
-        return serverTime;
+        return serverTime.toString();
     }
 
     public boolean isFirstPerson() {
@@ -209,5 +243,23 @@ public class Server implements SqResponseListener, Runnable{
 
     public String getNightDuration() {
         return nightDuration;
+    }
+
+    public String getDurationTillSunriseOrSunset() {
+        return tillSunsetOrSunrise;
+    }
+
+    public int getDayOrNightProgress() {
+        double minutesInDay = ChronoUnit.MINUTES.between(SUNRISE_TIME, SUNSET_TIME);
+        double minutesInNight = 24 * 60 - minutesInDay;
+
+        if (isDaytime()) {
+            return (int) (100 - (ingameMinutesToSunriseOrSunset / minutesInDay) * 100);
+        }
+        return (int) (100 - (ingameMinutesToSunriseOrSunset / minutesInNight) * 100);
+    }
+
+    public boolean isRefreshFailed() {
+        return refreshFailed;
     }
 }

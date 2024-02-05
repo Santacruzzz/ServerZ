@@ -26,6 +26,8 @@ public class Utils {
 
     @NonNull
     public static byte[] right(@NonNull byte[] inputList, int numOfElements) {
+        assert(inputList.length >= numOfElements);
+
         byte[] newArray = new byte[numOfElements];
         int srcPos = inputList.length - numOfElements;
         System.arraycopy(inputList, srcPos, newArray, 0, numOfElements);

@@ -1,7 +1,6 @@
 package pl.tmkd.serverz;
 
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
-import static pl.tmkd.serverz.sq.Constants.TAG_SQ;
 import static pl.tmkd.serverz.sq.msg.Utils.isServerNotInList;
 
 import android.app.Activity;
@@ -18,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
@@ -42,16 +42,16 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         button.setOnClickListener(this);
         listView.setAdapter(adapter);
 
-        addTestServers();
+        addTestServers();   // TODO remove this later on
     }
 
     private void addTestServers() {
-        Server testServer = new Server("138.201.226.81", 27026);
+        Server testServer = new Server("138.201.226.81", 27026, RefreshType.INFO_ONLY);
         testServer.setListener(adapter);
         arrayList.add(testServer);
         testServer.start();
 
-        Server testServer2 = new Server("185.207.214.32", 2307);
+        Server testServer2 = new Server("185.207.214.32", 2307, RefreshType.INFO_ONLY);
         testServer2.setListener(adapter);
         arrayList.add(testServer2);
         testServer2.start();
@@ -68,7 +68,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public void onClick(View v) {
         try {
-            Server server = new Server(editTextIp.getText().toString(), Integer.parseInt(editTextPort.getText().toString()));
+            Server server = new Server(editTextIp.getText().toString(), Integer.parseInt(editTextPort.getText().toString()), RefreshType.INFO_ONLY);
             if (isServerNotInList(arrayList, server)) {
                 server.setListener(adapter);
                 server.start();
