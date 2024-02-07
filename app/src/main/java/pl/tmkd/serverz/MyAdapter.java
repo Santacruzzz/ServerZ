@@ -16,7 +16,7 @@ import pl.tmkd.serverz.sq.ServerListener;
 
 public class MyAdapter extends BaseAdapter implements ServerListener {
     private final Context context;
-    private final ArrayList<Server> arrayList;
+    final ArrayList<Server> arrayList;
 
     public MyAdapter(Context context, ArrayList<Server> arrayList) {
         this.context = context;
@@ -61,5 +61,17 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
     @Override
     public void onServerInfoRefreshFailed(Server server) {
         // TODO
+    }
+
+    public void stopServers() {
+        for (Server server : arrayList) {
+            server.stop();
+        }
+    }
+
+    public void startServers() {
+        for (Server server : arrayList) {
+            server.start();
+        }
     }
 }

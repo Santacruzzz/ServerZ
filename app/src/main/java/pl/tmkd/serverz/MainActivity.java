@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleObserver;
 
 import java.util.ArrayList;
 
@@ -49,12 +51,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         Server testServer = new Server("138.201.226.81", 27026, RefreshType.INFO_ONLY);
         testServer.setListener(adapter);
         arrayList.add(testServer);
-        testServer.start();
 
         Server testServer2 = new Server("185.207.214.32", 2307, RefreshType.INFO_ONLY);
         testServer2.setListener(adapter);
         arrayList.add(testServer2);
-        testServer2.start();
     }
 
     @Override
@@ -79,5 +79,17 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         catch (NumberFormatException e) {
             Log.e(TAG_MAIN, "Incorrect data");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.startServers();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        adapter.stopServers();
     }
 }

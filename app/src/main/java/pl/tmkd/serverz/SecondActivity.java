@@ -8,6 +8,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+
 import java.util.ArrayList;
 
 import pl.tmkd.serverz.sq.RefreshType;
@@ -32,14 +38,12 @@ public class SecondActivity extends Activity implements ServerListener {
         createPlayersAdapter();
         server = new Server(ip, port, RefreshType.FULL);
         server.setListener(this);
-        server.start();
     }
 
     public void createPlayersAdapter() {
         ArrayList<String> items = new ArrayList<>();
 
-        itemsAdapter =
-                new ArrayAdapter<String>(this, R.layout.player_item, items);
+        itemsAdapter = new ArrayAdapter<String>(this, R.layout.player_item, items);
         ListView listView = findViewById(R.id.listOfPlayers);
         listView.setAdapter(itemsAdapter);
     }
@@ -70,5 +74,17 @@ public class SecondActivity extends Activity implements ServerListener {
     @Override
     public void onServerInfoRefreshFailed(Server server) {
         // TODO
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        server.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        server.stop();
     }
 }
