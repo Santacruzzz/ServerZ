@@ -67,7 +67,23 @@ public class Server implements SqResponseListener, Runnable{
         refreshTimer = refreshType.equals(RefreshType.FULL) ? TIMER_QUERY_RETRY_FAST : TIMER_QUERY_RETRY_SLOW;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (other == null || getClass() != other.getClass())
+            return false;
+        Server that = (Server) other;
+        return ip.equals(that.getIp()) && port == that.getPort();
+    }
+
     public void start() {
+        if (started)
+        {
+            Log.w(TAG_SERVER, getAddress() + " :: Server already started!");
+            return;
+        }
+
         started = true;
         Log.d(TAG_SERVER, getAddress() + " :: Started, refreshTimer: " + refreshTimer);
         refreshServerData();
