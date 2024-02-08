@@ -111,7 +111,7 @@ public class Server implements SqResponseListener, Runnable{
     @Override
     public void onServerRetryLimitReached() {
         refreshFailed = true;
-        Log.d(TAG_SERVER, getAddress() + " :: onServerRetryLimitReached");
+        Log.w(TAG_SERVER, getAddress() + " :: onServerRetryLimitReached");
         stop();
         if (null != listener)
             listener.onServerInfoRefreshFailed(this);

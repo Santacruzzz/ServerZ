@@ -1,5 +1,7 @@
 package pl.tmkd.serverz;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
@@ -73,7 +76,10 @@ public class SecondActivity extends Activity implements ServerListener {
 
     @Override
     public void onServerInfoRefreshFailed(Server server) {
-        // TODO
+        String text = "Refresh failed!";
+        runOnUiThread(()-> {
+            Toast.makeText(itemsAdapter.getContext(), text, LENGTH_SHORT).show();
+        });
     }
 
     @Override

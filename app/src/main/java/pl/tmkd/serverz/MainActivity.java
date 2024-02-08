@@ -14,8 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleObserver;
+
 
 import java.util.ArrayList;
 
@@ -74,10 +73,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 server.start();
                 arrayList.add(server);
                 adapter.notifyDataSetChanged();
+                editTextIp.setText("");
+                editTextPort.setText("");
             }
         }
         catch (NumberFormatException e) {
-            Log.e(TAG_MAIN, "Incorrect data");
+            Log.e(TAG_MAIN, "Wrong data");
         }
     }
 

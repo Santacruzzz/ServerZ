@@ -1,13 +1,19 @@
 package pl.tmkd.serverz;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
+import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -60,7 +66,10 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
 
     @Override
     public void onServerInfoRefreshFailed(Server server) {
-        // TODO
+        String text = "Refresh failed!";
+        ((Activity)context).runOnUiThread(()-> {
+            Toast.makeText(context, text, LENGTH_SHORT).show();
+        });
     }
 
     public void stopServers() {
