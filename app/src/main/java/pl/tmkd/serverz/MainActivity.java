@@ -4,6 +4,8 @@ import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 import static pl.tmkd.serverz.sq.msg.Utils.isServerNotInList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
     private ListView listView;
     private MyAdapter adapter;
     private ArrayList<Server> arrayList;
@@ -39,6 +41,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         listView = findViewById(R.id.idListView);
         editTextIp = findViewById(R.id.editTextIp);
         editTextPort = findViewById(R.id.editTextPort);
+        listView.setOnItemLongClickListener(this);
         listView.setOnItemClickListener(this);
         button.setOnClickListener(this);
         listView.setAdapter(adapter);
@@ -62,6 +65,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         intent.putExtra("ip", arrayList.get(position).getIp());
         intent.putExtra("port", arrayList.get(position).getPort());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Do you want to remove "+arrayList.get(position)+ "from list?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    arrayList.get(position).stop();
+                    arrayList.remove(position);
+                    adapter.notifyDataSetChanged();
+                }).setNegativeButton("No", (dialog, which) -> dialog.dismiss()).create().show();
+        return true;
     }
 
     @Override
