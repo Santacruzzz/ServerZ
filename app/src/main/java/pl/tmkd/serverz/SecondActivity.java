@@ -17,13 +17,14 @@ import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerListener;
 
-public class SecondActivity extends Activity implements ServerListener {
+public class SecondActivity extends Activity implements ServerListener, Serializable {
     private View view;
     private TextView textView;
     Server server;
