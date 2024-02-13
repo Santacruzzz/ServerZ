@@ -32,14 +32,13 @@ import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerAddress;
 
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener, Serializable {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
     private ListView listView;
     private MyAdapter adapter;
     private ArrayList<Server> arrayList;
     private ArrayList<ServerAddress> addressList;
     private EditText editTextIp;
     private EditText editTextPort;
-    private DataStorageManager dataManager;
     private  File file;
 
     @Override
@@ -119,13 +118,13 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public void loadServers() {
         try {
             ArrayList<ServerAddress> addresses = readData(file);
+
             for (ServerAddress address : addresses) {
                 Server server = new Server(address.getIp(), address.getPort(), RefreshType.INFO_ONLY);
                 server.setListener(adapter);
-                server.start();
-                adapter.notifyDataSetChanged();
+                arrayList.add(server);
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             Log.e(TAG_MAIN, String.valueOf(e));
         }
     }
