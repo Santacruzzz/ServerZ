@@ -25,51 +25,63 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="2">
-            <TextView
-                android:id="@+id/amountOfPlayers"
-                android:gravity="center"
+            <TableLayout
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:textColor="#FEFEFE"
-                android:textSize="20sp"
-                android:padding="3dip" />
-            <TextView
-                android:id="@+id/dayDuration"
-                android:gravity="center"
+                android:layout_weight="2">
+                <TextView
+                    android:id="@+id/amountOfPlayers"
+                    android:gravity="center"
+                    android:textColor="#FEFEFE"
+                    android:textSize="15sp"
+                    android:layout_weight="1"
+                    />
+                <TextView
+                    android:id="@+id/dayDuration"
+                    android:gravity="center"
+                    android:textColor="#FEFEFE"
+                    android:textSize="15sp"
+                    android:layout_weight="1"
+                    />
+                <TextView
+                    android:id="@+id/serverTime"
+                    android:gravity="center"
+                    android:textColor="#FEFEFE"
+                    android:textSize="15sp"
+                    android:layout_weight="1"
+                    />
+            </TableLayout>
+            <TableLayout
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:textColor="#FEFEFE"
-                android:textSize="20sp"
-                android:padding="3dip" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2">
-            <TextView
-                android:id="@+id/serverTime"
-                android:gravity="center"
-                android:layout_height="match_parent"
-                android:textColor="#FEFEFE"
-                android:textSize="20sp"
-                android:padding="3dip" />
-            <TextView
-                android:id="@+id/nightDuration"
-                android:gravity="center"
-                android:layout_height="match_parent"
-                android:textColor="#FEFEFE"
-                android:textSize="20sp"
-                android:padding="3dip" />
+                android:layout_weight="2">
+                <TextView
+                    android:id="@+id/durationTillSunriseOrSunset"
+                    android:gravity="center"
+                    android:textColor="#FEFEFE"
+                    android:textSize="25sp"
+                    android:layout_weight="2"
+                    />
+                <TextView
+                    android:id="@+id/nightDuration"
+                    android:gravity="center"
+                    android:textColor="#FEFEFE"
+                    android:textSize="15sp"
+                    android:layout_weight="1"
+                    />
+            </TableLayout>
         </TableRow>
     </TableLayout>
 
     <ProgressBar
-        android:id="@+id/progressBar2"
-        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5"
+        android:layout_weight="0.2"
         android:background="#0D1423"
-        android:progressTint="#135070" />
+        android:progressTint="#135070"
+        android:max="100" />
 
     <TextView
         android:id="@+id/players"
@@ -81,8 +93,7 @@
         android:text="@string/players"
         android:textAlignment="center"
         android:textColor="#FEFEFE"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textSize="18sp"/>
 
     <ListView
         android:id="@+id/listOfPlayers"
@@ -93,6 +104,4 @@
         android:visibility="visible">
 
     </ListView>
-
-
 </LinearLayout>
