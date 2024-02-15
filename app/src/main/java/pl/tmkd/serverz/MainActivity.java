@@ -36,7 +36,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private ListView listView;
     private MyAdapter adapter;
     private ArrayList<Server> arrayList;
-    private ArrayList<ServerAddress> addressList;
     private EditText editTextIp;
     private EditText editTextPort;
     private  File file;
@@ -46,7 +45,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         super.onCreate(savedInstanceState);
         View mainView = getLayoutInflater().inflate(R.layout.layout_main, null);
         setContentView(mainView);
-        addressList = new ArrayList<>();
+        ArrayList<ServerAddress> addressList = new ArrayList<>();
         file = new File(this.getFileStreamPath("servers.txt").toURI());
         arrayList = new ArrayList<>();
         adapter = new MyAdapter(this, arrayList);
@@ -84,10 +83,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public void onClick(View v) {
         try {
-            ServerAddress address = new ServerAddress(Integer.parseInt(editTextPort.getText().toString()), editTextIp.getText().toString());
-            addressList.add(address);
-            saveData(addressList, file);
-            Server server = new Server(address.getIp(), address.getPort(), RefreshType.INFO_ONLY);
+            Server server = new Server(editTextIp.getText().toString(), Integer.parseInt(editTextPort.getText().toString()), RefreshType.INFO_ONLY);
             if (isServerNotInList(arrayList, server)) {
                 server.setListener(adapter);
                 server.start();
@@ -97,9 +93,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 editTextPort.setText("");
             }
         } catch (NumberFormatException e) {
-            Log.e(TAG_MAIN, "Wrong data");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            Log.e(TAG_MAIN, "Wrong data" + e);
         }
     }
 
@@ -115,9 +109,23 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         adapter.stopServers();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ArrayList<ServerAddress> addressList = new ArrayList<>();
+        for (Server server : arrayList) {
+            addressList.add(new ServerAddress(server.getPort(), server.getIp()));
+        }
+        try {
+            DataStorageManager.saveData(addressList, file);
+        } catch (IOException e) {
+            Log.e(TAG_MAIN, "Exception while saving file: " + e);
+        }
+    }
+
     public void loadServers() {
         try {
-            ArrayList<ServerAddress> addresses = readData(file);
+            ArrayList<ServerAddress> addresses = DataStorageManager.readData(file);
 
             for (ServerAddress address : addresses) {
                 Server server = new Server(address.getIp(), address.getPort(), RefreshType.INFO_ONLY);
@@ -127,20 +135,5 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         } catch (Exception e) {
             Log.e(TAG_MAIN, String.valueOf(e));
         }
-    }
-
-    public void saveData(ArrayList<ServerAddress> addressList, File file) throws IOException {
-        FileOutputStream fos = new FileOutputStream(file);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(addressList);
-        oos.close();
-    }
-
-    public ArrayList<ServerAddress> readData(File file) throws IOException, ClassNotFoundException {
-        FileInputStream fis = new FileInputStream(file);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        ArrayList<ServerAddress> addresses = (ArrayList<ServerAddress>) ois.readObject();
-        ois.close();
-        return addresses;
     }
 }
