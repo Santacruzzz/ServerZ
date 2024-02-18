@@ -7,7 +7,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import pl.tmkd.serverz.sq.Server;
@@ -49,6 +48,16 @@ public class Utils {
     }
 
     @NonNull
+    public static String readSizedString(@NonNull ByteBuffer buffer) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int stringSize = buffer.get() & 0xFF;
+        for (int i = 0; i < stringSize; i++) {
+            stringBuilder.append((char) buffer.get());
+        }
+        return stringBuilder.toString();
+    }
+
+    @NonNull
     public static String getExtraValue(@NonNull List<String> extras, String name)
     {
         List<String> filtered = extras.stream().filter(s -> s.contains(name)).collect(Collectors.toList());
@@ -85,5 +94,26 @@ public class Utils {
                 return false;
             }
         }return true;
+    }
+
+    public static int getIndexOfByte(ByteBuffer where, byte what) {
+        int padding = where.position();
+        ByteBuffer readOnlyBuffer = where.asReadOnlyBuffer();
+        for (int i = 0; i < where.remaining(); i++) {
+            if (readOnlyBuffer.get(padding + i) == what) {
+                return i;
+            }
+        }
+        return where.remaining();
+    }
+
+    public static long getBytes(ByteBuffer bytes, int num) {
+        long result = 0;
+        byte[] byteArray = new byte[num];
+        bytes.get(byteArray);
+        for (int i = byteArray.length - 1; i >= 0; i--) {
+            result = (result << 8) | (byteArray[i] & 0xFF);
+        }
+        return result;
     }
 }

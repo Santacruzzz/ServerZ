@@ -13,7 +13,7 @@ public class Constants {
     public static final byte ID_PLAYER_REQ = 0x55;
     public static final byte ID_RULES_REQ = 0x56;
     public static final byte[] STEAM_QUERY_HEADER = {(byte)255, (byte)255, (byte)255, (byte)255};
-    public static final int TIMER_QUERY_GUARD = 3000;
+    public static final int TIMER_QUERY_GUARD = 5000;
     public static final int TIMER_QUERY_RETRY_SLOW = 15000;
     public static final int TIMER_QUERY_RETRY_FAST = 5000;
     public static final byte CHALLENGE_ID_LENGTH = 4;
@@ -21,6 +21,7 @@ public class Constants {
     public static final String TAG_SQ = "tmkd-sq";
     public static final String TAG_SERVER = "tmkd-server";
     public static final String TAG_MAIN = "tmkd-activity";
+    public static final String STEAM_MOD_URL = "https://steamcommunity.com/sharedfiles/filedetails/?id=";
     public static final LocalTime SUNRISE_TIME = LocalTime.of(5, 0, 0);
     public static final LocalTime SUNSET_TIME = LocalTime.of(19, 0, 0);
 }

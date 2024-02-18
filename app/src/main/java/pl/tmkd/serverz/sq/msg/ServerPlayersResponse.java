@@ -1,10 +1,8 @@
 package pl.tmkd.serverz.sq.msg;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static pl.tmkd.serverz.sq.Constants.TAG_SQ;
+import static pl.tmkd.serverz.sq.msg.Utils.getBytes;
 import static pl.tmkd.serverz.sq.msg.Utils.readString;
-
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.util.Vector;
@@ -13,19 +11,17 @@ public class ServerPlayersResponse extends ParsedResponse {
     private final Vector<Player> players;
 
     public ServerPlayersResponse(ByteBuffer payload) {
-        super(payload);
-        players = new Vector<Player>();
+        players = new Vector<>();
 
-        this.payload.position(4);
-        short numOfPlayers = (short) (this.payload.getShort() & 0xFF);
+        payload.position(4);
+        short numOfPlayers = (short) (payload.getShort() & 0xFF);
 
-        Log.d(TAG_SQ, "numOfPlayers: " + numOfPlayers);
         for (short i = 0; i < numOfPlayers; ++i) {
             Player player = new Player();
-            player.setId((short) (this.payload.get() & 0xFF));
-            player.setName(readString(this.payload));
-            player.setScore((int) (this.payload.getInt() & 0xFFFF));
-            player.setDuration((float) (this.payload.order(LITTLE_ENDIAN).getFloat()));
+            player.setId((short) (payload.get() & 0xFF));
+            player.setName(readString(payload));
+            player.setScore(getBytes(payload, 4));
+            player.setDuration(payload.order(LITTLE_ENDIAN).getFloat());
             this.players.add(player);
         }
     }

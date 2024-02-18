@@ -11,7 +11,7 @@ public class Player {
 
     private short id;
     private String name;
-    private int score;
+    private long score;
     private String playtime;
 
     public void setId(short id) {
@@ -30,7 +30,7 @@ public class Player {
         this.name = name;
     }
 
-    public void setScore(int score) {
+    public void setScore(long score) {
         this.score = score;
     }
 
@@ -46,7 +46,7 @@ public class Player {
         return name;
     }
 
-    public int getScore() {
+    public long getScore() {
         return score;
     }
 

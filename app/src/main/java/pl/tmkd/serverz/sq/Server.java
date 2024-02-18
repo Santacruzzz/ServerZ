@@ -3,6 +3,7 @@ package pl.tmkd.serverz.sq;
 import static pl.tmkd.serverz.sq.Constants.SUNRISE_TIME;
 import static pl.tmkd.serverz.sq.Constants.SUNSET_TIME;
 import static pl.tmkd.serverz.sq.Constants.TAG_SERVER;
+import static pl.tmkd.serverz.sq.Constants.TAG_SQ;
 import static pl.tmkd.serverz.sq.Constants.TIMER_QUERY_RETRY_FAST;
 import static pl.tmkd.serverz.sq.Constants.TIMER_QUERY_RETRY_SLOW;
 import static pl.tmkd.serverz.sq.msg.Utils.formatDuration;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 import pl.tmkd.serverz.sq.msg.Player;
 import pl.tmkd.serverz.sq.msg.ServerInfoResponse;
 import pl.tmkd.serverz.sq.msg.ServerPlayersResponse;
+import pl.tmkd.serverz.sq.msg.ServerRulesResponse;
 
 public class Server implements SqResponseListener, Runnable{
     private final String ip;
@@ -53,6 +56,7 @@ public class Server implements SqResponseListener, Runnable{
     private boolean refreshFailed;
     private final int refreshTimer;
     private long ingameMinutesToSunriseOrSunset;
+    private ArrayList<Mod> mods;
 
     public Server(String ip, int port, RefreshType refreshType) {
         this.ip = ip;
@@ -104,20 +108,13 @@ public class Server implements SqResponseListener, Runnable{
     }
 
     @Override
-    public void onServerInfoResponse(ServerInfoResponse response) {
-        Log.d(TAG_SERVER, getAddress() + " :: onServerInfoResponse");
-        store(response);
-        refreshHandler.postDelayed(this, refreshTimer);
-
-        if (null != listener)
-            listener.onServerInfoRefreshed(this);
-    }
-
-    @Override
-    public void onServerInfoAndPlayersResponse(ServerInfoResponse infoResponse, ServerPlayersResponse playersResponse) {
-        Log.d(TAG_SERVER, getAddress() + " :: onServerInfoAndPlayersResponse");
+    public void onServerInfoResponse(ServerInfoResponse infoResponse, ServerPlayersResponse playersResponse, ServerRulesResponse rulesResponse) {
+        Log.d(TAG_SERVER, getAddress() + " :: onServerInfoResponse: " + infoResponse + ", " + playersResponse + ", " + rulesResponse);
         store(infoResponse);
-        store(playersResponse);
+        if (null != playersResponse)
+            store(playersResponse);
+        if (null != rulesResponse)
+            store(rulesResponse);
         refreshHandler.postDelayed(this, refreshTimer);
 
         if (null != listener)
@@ -163,6 +160,11 @@ public class Server implements SqResponseListener, Runnable{
         this.players = playersResponse.getPlayers();
     }
 
+    private void store(@NonNull ServerRulesResponse rulesResponse) {
+        this.mods = rulesResponse.getMods();
+        Log.d(TAG_SERVER, getAddress() + " :: Number of loaded mods: " + mods.size());
+    }
+
     private void calculateTimeRelatedValues() {
         if (dayTimeMult * nightTimeMult == 0) {
             Log.e(TAG_SERVER, getAddress() + " :: Time factors are not valid, dayTimeMult: " + dayTimeMult + ", nightTimeMult: " + nightTimeMult);
@@ -175,9 +177,7 @@ public class Server implements SqResponseListener, Runnable{
 
         Log.d(TAG_SERVER, getAddress() + " :: Server time: " + serverTime
                 + ", in game till day/night: " + formatDuration(Duration.ofMinutes(ingameMinutesToSunriseOrSunset))
-                + ", real: " + tillSunsetOrSunrise);
-
-        Log.d(TAG_SERVER, getAddress() + " :: progress: " + getDayOrNightProgress());
+                + ", real: " + tillSunsetOrSunrise + " (" + getDayOrNightProgress() + "%)");
     }
 
     private void calculateMinutesTillSunsetOrSunrise() {

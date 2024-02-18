@@ -20,17 +20,21 @@ import pl.tmkd.serverz.sq.msg.Request;
 import pl.tmkd.serverz.sq.msg.Response;
 import pl.tmkd.serverz.sq.msg.ServerInfoResponse;
 import pl.tmkd.serverz.sq.msg.ServerPlayersResponse;
+import pl.tmkd.serverz.sq.msg.ServerRulesResponse;
 
 public class SourceQueryTask implements Runnable {
     private final Request a2sInfo;
     private final Request a2sPlayer;
     private final Request a2sRules;
     private final InetSocketAddress address;
+    private final DatagramPacket receivedPacket;
     private SqResponseListener listener;
-    private DatagramSocket socket = null;
+    private DatagramSocket socket;
     private byte[] challengeId;
     private int retries;
     private final RefreshType refreshType;
+    private final Response emptyResponse;
+    private boolean hasRefreshedMods;
 
     public SourceQueryTask(String ip, int port, RefreshType refreshType) {
         a2sInfo = new Request(ID_INFO_REQ, "Source Engine Query\0".getBytes());
@@ -40,6 +44,11 @@ public class SourceQueryTask implements Runnable {
         challengeId = null;
         retries = 0;
         this.refreshType = refreshType;
+        socket = null;
+        emptyResponse = new Response();
+        byte[] buffer = new byte[2048];
+        receivedPacket = new DatagramPacket(buffer, 2048);
+        hasRefreshedMods = false;
     }
 
     public void setListener(SqResponseListener listener) {
@@ -50,16 +59,23 @@ public class SourceQueryTask implements Runnable {
     public void run() {
         retries = 0;
         try {
-            socket = new DatagramSocket();
+            if (null == socket)
+                socket = new DatagramSocket();
+
             ServerInfoResponse infoResp = (ServerInfoResponse) handleResponse(sendRequest(a2sInfo));
+            ServerPlayersResponse playerResp = null;
+            ServerRulesResponse rulesResponse = null;
+
             if (refreshType.equals(RefreshType.FULL)) {
-                ServerPlayersResponse playerResp = (ServerPlayersResponse) handleResponse(sendRequest(a2sPlayer));
-                if (null != listener)
-                    listener.onServerInfoAndPlayersResponse(infoResp, playerResp);
-            } else {
-                if (null != listener)
-                    listener.onServerInfoResponse(infoResp);
+                playerResp = (ServerPlayersResponse) handleResponse(sendRequest(a2sPlayer));
+                if (!hasRefreshedMods)
+                {
+                    rulesResponse = (ServerRulesResponse) handleResponse(sendRequest(a2sRules));
+                    hasRefreshedMods = true;
+                }
             }
+            if (null != listener)
+                listener.onServerInfoResponse(infoResp, playerResp, rulesResponse);
         } catch (Exception e) {
             Log.e(TAG_SQ, e + " : " + Arrays.toString(e.getStackTrace()));
         }
@@ -71,20 +87,22 @@ public class SourceQueryTask implements Runnable {
                 return new ServerInfoResponse(response.getBuffer());
             case ID_PLAYER_RESP:
                 return new ServerPlayersResponse(response.getBuffer());
+            case ID_RULES_RESP:
+                return new ServerRulesResponse(response.getBuffer());
         }
-        throw new Exception("Unknown response ID");
+        throw new Exception("Unknown response ID: " + String.format("0x%02X", response.getId()));
     }
 
     @NonNull
     private Response sendRequest(@NonNull Request request) throws IOException {
         if (null == socket) {
-            Log.e(TAG_SQ, "[" + address + "] " + "Socket not initialized. Returning default Response()");
-            return new Response();
+            Log.e(TAG_SQ, address + " :: " + "Socket not initialized. Returning default Response()");
+            return emptyResponse;
         }
         if (retries >= 3) {
-            Log.e(TAG_SQ, "[" + address + "] " + "Max retries limit reached.");
+            Log.e(TAG_SQ, address + " :: " + "Max retries limit reached.");
             listener.onServerRetryLimitReached();
-            return new Response();
+            return emptyResponse;
         }
         DatagramPacket packetToSend = new DatagramPacket(request.getPayload(), request.getSize(), address);
 
@@ -93,24 +111,22 @@ public class SourceQueryTask implements Runnable {
         }
 
         socket.send(packetToSend);
-        Log.d(TAG_SQ, "[" + address + "] " + "Request " + request.getName() + " sent");
+        Log.d(TAG_SQ, address + " :: Request " + request.getName() + " sent");
 
-        byte[] buf = new byte[2048];
-        DatagramPacket receivedPacket = new DatagramPacket(buf, 2048);
         socket.setSoTimeout(TIMER_QUERY_GUARD);
         try {
             socket.receive(receivedPacket);
         } catch (SocketTimeoutException e) {
             retries ++;
-            Log.w(TAG_SQ, "[" + address + "] " + "Timeout, retrying... (" + retries + ")");
+            Log.w(TAG_SQ, address + " :: Timeout, retrying... (" + retries + ")");
             return sendRequest(request);
         }
         Response response = new Response(receivedPacket);
-        Log.d(TAG_SQ, "[" + address + "] " + response.getName() + " received, size: " + receivedPacket.getLength() + " bytes");
+        Log.d(TAG_SQ, address + " :: " + response.getName() + " received, size: " + receivedPacket.getLength() + " bytes");
 
         if (response.isNewChallengeIdNeeded()) {
             retries ++;
-            Log.w(TAG_SQ, "[" + address + "]" + " New challenge needed. Updating new ID and resending the " + request.getName());
+            Log.w(TAG_SQ, address + " :: New challenge needed. Updating new ID and resending the " + request.getName());
             challengeId = right(response.getPayload(), CHALLENGE_ID_LENGTH);
             return sendRequest(request);
         }
