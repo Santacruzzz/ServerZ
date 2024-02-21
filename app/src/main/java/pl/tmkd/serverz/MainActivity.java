@@ -3,16 +3,27 @@ package pl.tmkd.serverz;
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 import static pl.tmkd.serverz.sq.msg.Utils.isServerNotInList;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -27,18 +38,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerAddress;
 
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
     private ListView listView;
     private MyAdapter adapter;
     private ArrayList<Server> arrayList;
     private EditText editTextIp;
     private EditText editTextPort;
     private  File file;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,10 +66,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         listView = findViewById(R.id.idListView);
         editTextIp = findViewById(R.id.editTextIp);
         editTextPort = findViewById(R.id.editTextPort);
-        listView.setOnItemLongClickListener(this);
         listView.setOnItemClickListener(this);
         button.setOnClickListener(this);
         listView.setAdapter(adapter);
+        registerForContextMenu(listView);
         loadServers();
     }
 
@@ -69,15 +82,69 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        new AlertDialog.Builder(MainActivity.this)
-                .setTitle("Do you want to remove " + arrayList.get(position) + "from list?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    arrayList.get(position).stop();
-                    arrayList.remove(position);
-                    adapter.notifyDataSetChanged();
-                }).setNegativeButton("No", (dialog, which) -> dialog.dismiss()).create().show();
-        return true;
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        menu.add(0, v.getId(), 0, "Edit");
+        menu.add(0, v.getId(), 0 , "Delete");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        assert info != null;
+        int index = info.position;
+
+            if (item.getTitle() == "Edit") {
+                editServer(dialog, index);
+            }
+
+            else if (item.getTitle() == "Delete") {
+                deleteServer(dialog, index);
+            }
+        return false;
+    }
+
+    public void editServer(Dialog dialog, int index) {
+        dialog.setContentView(R.layout.custom_edit_dialog);
+        EditText editIp = dialog.findViewById(R.id.editTextIp);
+        EditText editPort = dialog.findViewById(R.id.editTextPort);
+        Button b_save = dialog.findViewById(R.id.button_save);
+        Button b_dismiss = dialog.findViewById(R.id.button_dismiss);
+        dialog.show();
+        editIp.setText((arrayList.get(index)).getIp());
+        editPort.setText(String.valueOf((arrayList.get(index)).getPort()));
+
+        b_save.setOnClickListener(v -> {
+            Server server = arrayList.get(index);
+            server.stop();
+            server.setIp(editIp.getText().toString());
+            server.setPort(Integer.parseInt(editPort.getText().toString()));
+            server.start();
+            adapter.notifyDataSetChanged();
+            dialog.dismiss();
+        });
+
+        b_dismiss.setOnClickListener(v -> dialog.dismiss());
+    }
+
+    public void deleteServer(Dialog dialog, int index) {
+        dialog.setContentView(R.layout.custome_delete_dialog);
+        Button b_ok = dialog.findViewById(R.id.button_ok);
+        Button b_no= dialog.findViewById(R.id.button_no);
+        dialog.show();
+
+        b_ok.setOnClickListener(v -> {
+            Server server = arrayList.get(index);
+            server.stop();
+            arrayList.remove(server);
+            adapter.notifyDataSetChanged();
+            dialog.dismiss();
+        });
+
+        b_no.setOnClickListener(v -> dialog.dismiss());
     }
 
     @Override

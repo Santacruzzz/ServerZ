@@ -29,7 +29,8 @@
                 android:id="@+id/editTextIp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:inputType="text"
+                android:inputType="numberDecimal"
+                android:digits="0123456789."
                 android:autofillHints=""
                 android:hint="@string/ip"
                 android:textColorHint="@color/white"
@@ -42,6 +43,7 @@
                 android:layout_weight="1"
                 android:autofillHints=""
                 android:hint="@string/port"
+                android:inputType="number"
                 android:textColorHint="@color/white"
                 android:textColor="@android:color/white"
                 android:background="#0D1423"/>

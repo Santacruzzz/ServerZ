@@ -26,7 +26,7 @@ public class SourceQueryTask implements Runnable {
     private final Request a2sInfo;
     private final Request a2sPlayer;
     private final Request a2sRules;
-    private final InetSocketAddress address;
+    private InetSocketAddress address;
     private final DatagramPacket receivedPacket;
     private SqResponseListener listener;
     private DatagramSocket socket;
@@ -132,5 +132,9 @@ public class SourceQueryTask implements Runnable {
         }
         retries = 0;
         return response;
+    }
+
+    public void setAddress(String ip, int port) {
+        address = new InetSocketAddress(ip, port);
     }
 }

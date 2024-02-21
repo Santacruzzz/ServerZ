@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#0D1423"
+    android:padding="10dp">
+
+    <TableRow
+        android:id="@+id/tableRow"
+        android:layout_width="392dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:textAlignment="center"
+        android:textSize="25sp"
+        android:textStyle="bold" >
+
+        <TextView
+            android:id="@+id/deleteQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/do_you_really_want_to_remove_the_server"
+            android:textColor="@color/white"
+            android:autofillHints=""
+            android:textSize="20dp" />
+
+    </TableRow>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tableRow"
+        android:layout_margin="15dp"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/button_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="YES"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/button_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_toRightOf="@id/button_ok"
+            android:text="NO"
+            android:textStyle="bold"
+            android:textColor="#FF0000"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

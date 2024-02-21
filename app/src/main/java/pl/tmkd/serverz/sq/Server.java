@@ -30,8 +30,8 @@ import pl.tmkd.serverz.sq.msg.ServerPlayersResponse;
 import pl.tmkd.serverz.sq.msg.ServerRulesResponse;
 
 public class Server implements SqResponseListener, Runnable{
-    private final String ip;
-    private final int port;
+    private String ip;
+    private int port;
     private final ExecutorService executor;
     private final SourceQueryTask refreshServerDataTask;
     private ServerListener listener;
@@ -263,6 +263,16 @@ public class Server implements SqResponseListener, Runnable{
 
     public String getDurationTillSunriseOrSunset() {
         return tillSunsetOrSunrise;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+        this.refreshServerDataTask.setAddress(this.ip, this.port);
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+        this.refreshServerDataTask.setAddress(this.ip, this.port);
     }
 
     public int getDayOrNightProgress() {
