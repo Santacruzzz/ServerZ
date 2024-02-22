@@ -266,11 +266,17 @@ public class Server implements SqResponseListener, Runnable{
     }
 
     public void setIp(String ip) {
+        this.name = "";
+        this.playersNum = 0;
+        this.maxPlayers = 0;
         this.ip = ip;
         this.refreshServerDataTask.setAddress(this.ip, this.port);
     }
 
     public void setPort(int port) {
+        this.name = "";
+        this.playersNum = 0;
+        this.maxPlayers = 0;
         this.port = port;
         this.refreshServerDataTask.setAddress(this.ip, this.port);
     }
