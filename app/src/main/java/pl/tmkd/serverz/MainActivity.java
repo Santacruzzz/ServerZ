@@ -1,6 +1,7 @@
 package pl.tmkd.serverz;
 
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
+import static pl.tmkd.serverz.sq.msg.Utils.isIpAndPortInList;
 import static pl.tmkd.serverz.sq.msg.Utils.isServerNotInList;
 
 import android.app.Activity;
@@ -106,10 +107,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         b_save.setOnClickListener(v -> {
             Server server = arrayList.get(index);
             server.stop();
-            server.setIp(editIp.getText().toString());
-            server.setPort(Integer.parseInt(editPort.getText().toString()));
-            server.start();
-            adapter.notifyDataSetChanged();
+            String ip = editIp.getText().toString();
+            int port = Integer.parseInt(editPort.getText().toString());
+            if (!isIpAndPortInList(arrayList, ip, port)) {
+                server.setIp(ip);
+                server.setPort(port);
+                server.start();
+                adapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
             dialog.dismiss();
         });
 

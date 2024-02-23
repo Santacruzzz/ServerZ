@@ -96,6 +96,15 @@ public class Utils {
         }return true;
     }
 
+    public static boolean isIpAndPortInList(ArrayList<Server> servers, String ip, int port) {
+        for (Server item : servers) {
+            if ((item.getIp()).equals(ip) && item.getPort() == port) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static int getIndexOfByte(ByteBuffer where, byte what) {
         int padding = where.position();
         ByteBuffer readOnlyBuffer = where.asReadOnlyBuffer();
