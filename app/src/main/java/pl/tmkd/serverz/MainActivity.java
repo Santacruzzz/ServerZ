@@ -151,18 +151,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 editTextIp.setText("");
                 editTextPort.setText("");
                 closeKeyboard();
+                editTextIp.clearFocus();
+                editTextPort.clearFocus();
             }
         } catch (NumberFormatException e) {
             Log.e(TAG_MAIN, "Wrong data" + e);
-        }
-    }
-
-    private void closeKeyboard() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
@@ -189,6 +182,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             DataStorageManager.saveData(addressList, file);
         } catch (IOException e) {
             Log.e(TAG_MAIN, "Exception while saving file: " + e);
+        }
+    }
+
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 

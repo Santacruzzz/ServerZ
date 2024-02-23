@@ -35,7 +35,7 @@
                 android:hint="@string/ip"
                 android:textColorHint="@color/white"
                 android:textColor="@android:color/white"
-                android:background="#0D1423"/>
+                android:background="#0D1423" />
 
             <EditText
                 android:id="@+id/editTextPort"
@@ -46,7 +46,7 @@
                 android:inputType="number"
                 android:textColorHint="@color/white"
                 android:textColor="@android:color/white"
-                android:background="#0D1423"/>
+                android:background="#0D1423" />
 
         </TableRow>
 

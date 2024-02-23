@@ -36,19 +36,19 @@
                     android:id="@+id/amountOfPlayers"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="20sp"
+                    android:textSize="25sp"
                     android:layout_weight="1" />
                 <TextView
                     android:id="@+id/dayDuration"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="20sp"
+                    android:textSize="25sp"
                     android:layout_weight="1" />
                 <TextView
                     android:id="@+id/nightDuration"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="20sp"
+                    android:textSize="25sp"
                     android:layout_weight="1" />
 
             </TableLayout>
@@ -62,13 +62,13 @@
                     android:id="@+id/serverTime"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="30sp"
+                    android:textSize="40sp"
                     android:layout_weight="2" />
                 <TextView
                     android:id="@+id/durationTillSunriseOrSunset"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="20sp"
+                    android:textSize="25sp"
                     android:layout_weight="1" />
 
             </TableLayout>
