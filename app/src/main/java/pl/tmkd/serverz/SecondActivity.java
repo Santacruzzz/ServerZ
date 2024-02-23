@@ -1,23 +1,20 @@
 package pl.tmkd.serverz;
 
-import static android.widget.Toast.LENGTH_SHORT;
+import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,12 +23,16 @@ import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerListener;
 
-public class SecondActivity extends Activity implements ServerListener, Serializable {
+public class SecondActivity extends AppCompatActivity implements ServerListener, Serializable {
     private View view;
     private TextView textView;
     private ProgressBar progressBar;
     Server server;
-    ArrayAdapter<String> itemsAdapter;
+    public TabLayout tabLayout;
+    private ViewPagerAdapter viewPagerAdapter;
+    ViewPager2 myViewPager2;
+    PlayerFragment playerFragment;
+    ModFragment modFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +43,30 @@ public class SecondActivity extends Activity implements ServerListener, Serializ
         Intent intent = getIntent();
         String ip = intent.getStringExtra("ip");
         int port = intent.getIntExtra("port", 0);
+        playerFragment = new PlayerFragment((getBaseContext()));
+        modFragment = new ModFragment((getBaseContext()));
+        myViewPager2 = findViewById(R.id.viewpager);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
+        viewPagerAdapter.add(playerFragment, "Players");
+        viewPagerAdapter.add(modFragment, "Modes");
 
-        createPlayersAdapter();
+        tabLayout = findViewById(R.id.tab_layout);
+        myViewPager2.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
+        myViewPager2.setAdapter(viewPagerAdapter);
+
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        new TabLayoutMediator(tabLayout, myViewPager2,
+                (tab, position) -> {
+            if (position == 0) {
+                tab.setText("PLAYERS");
+            }else {
+                tab.setText("MODS");
+            }
+        }
+        ).attach();
+
         server = new Server(ip, port, RefreshType.FULL);
         server.setListener(this);
-    }
-
-    public void createPlayersAdapter() {
-        ArrayList<String> items = new ArrayList<>();
-
-        itemsAdapter = new ArrayAdapter<String>(this, R.layout.player_item, items);
-        ListView listView = findViewById(R.id.listOfPlayers);
-        listView.setAdapter(itemsAdapter);
     }
 
     @SuppressLint("SetTextI18n")
@@ -79,8 +92,8 @@ public class SecondActivity extends Activity implements ServerListener, Serializ
     public void onServerInfoRefreshed(Server server2) {
         runOnUiThread(() -> {
             updateServerInfo();
-            itemsAdapter.clear();
-            itemsAdapter.addAll(server.getPlayers());
+            playerFragment.setPlayers(server.getPlayers());
+            modFragment.setMods(server.getMods());
         });
     }
 
@@ -88,7 +101,8 @@ public class SecondActivity extends Activity implements ServerListener, Serializ
     public void onServerInfoRefreshFailed(Server server) {
         String text = "Refresh failed!";
         runOnUiThread(()-> {
-            Toast.makeText(itemsAdapter.getContext(), text, LENGTH_SHORT).show();
+//            Toast.makeText(itemsAdapter.getContext(), text, LENGTH_SHORT).show();
+            Log.e(TAG_MAIN, text);
         });
     }
 

@@ -87,26 +87,24 @@
         android:progressTint="#135070"
         android:max="100" />
 
-    <TextView
-        android:id="@+id/players"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#0D1423"
-        android:gravity="center"
-        android:text="@string/players"
-        android:textAlignment="center"
-        android:textColor="#FEFEFE"
-        android:textSize="18sp"/>
+        android:layout_weight="1">
 
-    <ListView
-        android:id="@+id/listOfPlayers"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"
-        android:background="#0D1423"
-        android:visibility="visible">
-
-    </ListView>
+        android:layout_weight="5"
+        tools:ignore="MissingClass" />
 
 </LinearLayout>

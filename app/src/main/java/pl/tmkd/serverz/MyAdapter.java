@@ -68,7 +68,7 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
     public void onServerInfoRefreshFailed(Server server) {
         String text = "Refresh failed!";
         ((Activity)context).runOnUiThread(()-> {
-            Toast.makeText(context, text, LENGTH_SHORT).show();
+            Log.e(TAG_MAIN, text);
         });
     }
 

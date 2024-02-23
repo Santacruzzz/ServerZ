@@ -261,6 +261,8 @@ public class Server implements SqResponseListener, Runnable{
         return nightDuration;
     }
 
+    public ArrayList<Mod> getMods() { return mods;}
+
     public String getDurationTillSunriseOrSunset() {
         return tillSunsetOrSunrise;
     }

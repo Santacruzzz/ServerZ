@@ -30,4 +30,5 @@
     <string name="jakis_tekst">jakis tekst</string>
     <string name="save">Save</string>
     <string name="do_you_really_want_to_remove_the_server">Do you really want to remove the server?</string>
+    <string name="mode">Mode</string>
 </resources>

@@ -1,5 +1,6 @@
 package pl.tmkd.serverz;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 import static pl.tmkd.serverz.sq.msg.Utils.isIpAndPortInList;
 import static pl.tmkd.serverz.sq.msg.Utils.isServerNotInList;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -154,7 +156,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 editTextIp.clearFocus();
                 editTextPort.clearFocus();
             }
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
+            String text = "Incorrect IP address or port";
+            Toast.makeText(this, text, LENGTH_SHORT).show();
             Log.e(TAG_MAIN, "Wrong data" + e);
         }
     }

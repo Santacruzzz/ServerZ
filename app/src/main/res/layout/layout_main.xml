@@ -29,7 +29,7 @@
                 android:id="@+id/editTextIp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:inputType="numberDecimal"
+                android:inputType="number|numberDecimal"
                 android:digits="0123456789."
                 android:autofillHints=""
                 android:hint="@string/ip"
