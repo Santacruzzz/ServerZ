@@ -5,8 +5,8 @@ import static pl.tmkd.serverz.sq.Constants.STEAM_MOD_URL;
 import androidx.annotation.NonNull;
 
 public class Mod {
-    private long steamId;
-    private String name;
+    private final long steamId;
+    private final String name;
 
     public Mod(long steamId, String name) {
         this.steamId = steamId;

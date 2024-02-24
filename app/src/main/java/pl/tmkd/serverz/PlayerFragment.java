@@ -1,10 +1,7 @@
 package pl.tmkd.serverz;
 
-import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
-
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +9,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import pl.tmkd.serverz.sq.msg.Player;
 
 public class PlayerFragment extends Fragment {
     private View view;
     private final Context baseContext;
-    List<String> players;
-    ArrayAdapter<String> itemsAdapter;
+    ArrayAdapter<Player> playersAdapter;
 
-    public PlayerFragment(Context baseContext) {
+    public PlayerFragment(Context baseContext, ArrayList<Player> players) {
         this.baseContext = baseContext;
-        this.players = new ArrayList<>();
+        playersAdapter = new ArrayAdapter<> (baseContext, R.layout.player_item, players);
     }
 
     @Override
@@ -36,21 +32,16 @@ public class PlayerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.players_fragment, container, false);
-        createPlayersAdapter();
+        setAdapter();
         return view;
     }
 
-    public void createPlayersAdapter() {
-        itemsAdapter = new ArrayAdapter<> (baseContext, R.layout.player_item, players);
+    public void setAdapter() {
         ListView listView = view.findViewById(R.id.listOfPlayers);
-        listView.setAdapter(itemsAdapter);
+        listView.setAdapter(playersAdapter);
     }
 
-    public void setPlayers(List<String> players) {
-        this.players = players;
-        if (itemsAdapter != null) {
-            itemsAdapter.clear();
-            itemsAdapter.addAll(players);
-        }
+    public void update() {
+        playersAdapter.notifyDataSetChanged();
     }
 }

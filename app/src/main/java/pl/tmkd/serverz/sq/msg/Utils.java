@@ -84,6 +84,9 @@ public class Utils {
         if (seconds > 0) {
             result.add(String.format(Locale.getDefault(), "%ds", seconds));
         }
+        if (result.size() == 0) {
+            return "Now";
+        }
 
         return String.join(" ", result);
     }

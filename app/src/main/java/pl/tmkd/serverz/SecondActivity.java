@@ -17,7 +17,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
@@ -39,12 +38,16 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         super.onCreate(savedInstanceState);
         View view = getLayoutInflater().inflate(R.layout.active_server, null);
         setContentView(view);
-        progressBar = findViewById(R.id.progressBar);
+
         Intent intent = getIntent();
         String ip = intent.getStringExtra("ip");
         int port = intent.getIntExtra("port", 0);
-        playerFragment = new PlayerFragment((getBaseContext()));
-        modFragment = new ModFragment((getBaseContext()));
+        server = new Server(ip, port, RefreshType.FULL);
+        server.setListener(this);
+
+        progressBar = findViewById(R.id.progressBar);
+        playerFragment = new PlayerFragment(getBaseContext(), server.getPlayers());
+        modFragment = new ModFragment(getBaseContext(), server.getMods());
         myViewPager2 = findViewById(R.id.viewpager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
         viewPagerAdapter.add(playerFragment, "Players");
@@ -55,18 +58,13 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         myViewPager2.setAdapter(viewPagerAdapter);
 
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
-        new TabLayoutMediator(tabLayout, myViewPager2,
-                (tab, position) -> {
+        new TabLayoutMediator(tabLayout, myViewPager2, (tab, position) -> {
             if (position == 0) {
                 tab.setText("PLAYERS");
-            }else {
+            } else {
                 tab.setText("MODS");
             }
-        }
-        ).attach();
-
-        server = new Server(ip, port, RefreshType.FULL);
-        server.setListener(this);
+        }).attach();
     }
 
     @SuppressLint("SetTextI18n")
@@ -89,11 +87,11 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     }
 
     @Override
-    public void onServerInfoRefreshed(Server server2) {
+    public void onServerInfoRefreshed() {
         runOnUiThread(() -> {
             updateServerInfo();
-            playerFragment.setPlayers(server.getPlayers());
-            modFragment.setMods(server.getMods());
+            playerFragment.update();
+            modFragment.update();
         });
     }
 

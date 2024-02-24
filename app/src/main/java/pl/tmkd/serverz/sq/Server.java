@@ -50,7 +50,7 @@ public class Server implements SqResponseListener, Runnable{
     private String dayDuration;
     private String nightDuration;
     private boolean isDaytime;
-    private Vector<Player> players;
+    private ArrayList<Player> players;
     private final Handler refreshHandler;
     private boolean started;
     private boolean refreshFailed;
@@ -61,7 +61,8 @@ public class Server implements SqResponseListener, Runnable{
     public Server(String ip, int port, RefreshType refreshType) {
         this.ip = ip;
         this.port = port;
-        players = new Vector<>();
+        players = new ArrayList<>();
+        mods = new ArrayList<>();
         refreshServerDataTask = new SourceQueryTask(ip, port, refreshType);
         refreshServerDataTask.setListener(this);
         executor = Executors.newSingleThreadExecutor();
@@ -118,7 +119,7 @@ public class Server implements SqResponseListener, Runnable{
         refreshHandler.postDelayed(this, refreshTimer);
 
         if (null != listener)
-            listener.onServerInfoRefreshed(this);
+            listener.onServerInfoRefreshed();
     }
 
     @Override
@@ -157,11 +158,14 @@ public class Server implements SqResponseListener, Runnable{
     }
 
     private void store(@NonNull ServerPlayersResponse playersResponse) {
-        this.players = playersResponse.getPlayers();
+        players.clear();
+        players.addAll(playersResponse.getPlayers());
+        Log.d(TAG_SERVER, getAddress() + " :: Number of loaded players: " + players.size());
     }
 
     private void store(@NonNull ServerRulesResponse rulesResponse) {
-        this.mods = rulesResponse.getMods();
+        mods.clear();
+        mods.addAll(rulesResponse.getMods());
         Log.d(TAG_SERVER, getAddress() + " :: Number of loaded mods: " + mods.size());
     }
 
@@ -209,9 +213,7 @@ public class Server implements SqResponseListener, Runnable{
         return isDaytime;
     }
 
-    public List<String> getPlayers() {
-        return players.stream().map(Player::getPlaytime).collect(Collectors.toList());
-    }
+    public ArrayList<Player> getPlayers() { return players; }
 
     public String getAddress() {
         return ip + ":" + port;
@@ -261,7 +263,7 @@ public class Server implements SqResponseListener, Runnable{
         return nightDuration;
     }
 
-    public ArrayList<Mod> getMods() { return mods;}
+    public ArrayList<Mod> getMods() { return this.mods; }
 
     public String getDurationTillSunriseOrSunset() {
         return tillSunsetOrSunrise;

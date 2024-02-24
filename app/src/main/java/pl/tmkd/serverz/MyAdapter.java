@@ -60,7 +60,7 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
     }
 
     @Override
-    public void onServerInfoRefreshed(Server server) {
+    public void onServerInfoRefreshed() {
         ((Activity)context).runOnUiThread(this::notifyDataSetChanged);
     }
 

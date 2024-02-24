@@ -1,6 +1,6 @@
 package pl.tmkd.serverz.sq;
 
 public interface ServerListener {
-    void onServerInfoRefreshed(Server server);
+    void onServerInfoRefreshed();
     void onServerInfoRefreshFailed(Server server);
 }

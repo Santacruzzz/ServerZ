@@ -19,11 +19,9 @@ public class Player {
     }
 
     @NonNull
+    @Override
     public String toString() {
-        return String.format(
-                Locale.getDefault(),
-                "Id: %d, name: %s, score: %d, durationHms: %s",
-                this.getId(), this.getName(), this.getScore(), this.getPlaytime());
+        return this.getPlaytime();
     }
 
     public void setName(String name) {

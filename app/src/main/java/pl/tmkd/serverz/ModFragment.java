@@ -11,19 +11,17 @@ import android.widget.ListView;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import pl.tmkd.serverz.sq.Mod;
 
 public class ModFragment extends Fragment {
-    private final Context baseContex;
+    private final Context baseContext;
     private View view;
     ArrayAdapter<Mod> modsAdapter;
-    ArrayList<Mod> mods;
 
-    public ModFragment(Context baseContext) {
-        this.baseContex = baseContext;
-        this.mods = new ArrayList<>();
+    public ModFragment(Context baseContext, ArrayList<Mod> mods) {
+        this.baseContext = baseContext;
+        modsAdapter = new ArrayAdapter<>(baseContext, R.layout.mod_item, mods);
     }
 
     @Override
@@ -34,21 +32,16 @@ public class ModFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.mods_fragment, container, false);
-        createModAdapter();
+        setAdapter();
         return view;
     }
 
-    public void createModAdapter() {
-        modsAdapter = new ArrayAdapter<>(baseContex, R.layout.mod_item, mods);
-        ListView modesList = view.findViewById(R.id.listOfMods);
-        modesList.setAdapter(modsAdapter);
+    public void setAdapter() {
+        ListView modsList = view.findViewById(R.id.listOfMods);
+        modsList.setAdapter(modsAdapter);
     }
 
-    public void setMods(ArrayList<Mod> mods) {
-        this.mods = mods;
-        if (modsAdapter != null) {
-            modsAdapter.clear();
-            modsAdapter.addAll(mods);
-        }
+    public void update() {
+        modsAdapter.notifyDataSetChanged();
     }
 }

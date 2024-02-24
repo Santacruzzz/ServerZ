@@ -5,13 +5,13 @@ import static pl.tmkd.serverz.sq.msg.Utils.getBytes;
 import static pl.tmkd.serverz.sq.msg.Utils.readString;
 
 import java.nio.ByteBuffer;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class ServerPlayersResponse extends ParsedResponse {
-    private final Vector<Player> players;
+    private final ArrayList<Player> players;
 
     public ServerPlayersResponse(ByteBuffer payload) {
-        players = new Vector<>();
+        players = new ArrayList<>();
 
         payload.position(4);
         short numOfPlayers = (short) (payload.getShort() & 0xFF);
@@ -26,7 +26,7 @@ public class ServerPlayersResponse extends ParsedResponse {
         }
     }
 
-    public Vector<Player> getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return this.players;
     }
 }
