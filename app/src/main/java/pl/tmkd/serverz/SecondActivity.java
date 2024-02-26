@@ -1,6 +1,7 @@
 package pl.tmkd.serverz;
 
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
+import static pl.tmkd.serverz.sq.Constants.TAG_SECOND;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -46,18 +47,26 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         server.setListener(this);
 
         progressBar = findViewById(R.id.progressBar);
-        playerFragment = new PlayerFragment(getBaseContext(), server.getPlayers());
-        modFragment = new ModFragment(getBaseContext(), server.getMods());
-        myViewPager2 = findViewById(R.id.viewpager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
+
+        if (null == playerFragment) {
+            playerFragment = new PlayerFragment(getBaseContext(), server.getPlayers());
+        } else {
+            playerFragment.setPlayers(server.getPlayers());
+        }
+        if (null == modFragment) {
+            modFragment = new ModFragment(getBaseContext(), server.getMods());
+        } else {
+            modFragment.setMods(server.getMods());
+        }
+
         viewPagerAdapter.add(playerFragment, "Players");
         viewPagerAdapter.add(modFragment, "Modes");
-
-        tabLayout = findViewById(R.id.tab_layout);
+        myViewPager2 = findViewById(R.id.viewpager);
         myViewPager2.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         myViewPager2.setAdapter(viewPagerAdapter);
 
-        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
         new TabLayoutMediator(tabLayout, myViewPager2, (tab, position) -> {
             if (position == 0) {
                 tab.setText("PLAYERS");
@@ -65,6 +74,14 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
                 tab.setText("MODS");
             }
         }).attach();
+    }
+
+    public void updatePlayersFragment(PlayerFragment newPlayersFragment) {
+        this.playerFragment = newPlayersFragment;
+    }
+
+    public void updateModsFragment(ModFragment newModFragment) {
+        this.modFragment = newModFragment;
     }
 
     @SuppressLint("SetTextI18n")
