@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#0D1423"
+    android:orientation="horizontal"
+    tools:ignore="ExtraText">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/serverName"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#F4F5F9"
+            android:textSize="20sp"
+            tools:ignore="NestedWeights" />
+
+        <TableRow
+            android:id="@+id/hr"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#444">
+        </TableRow>
+
+        <TableLayout
+            android:id="@+id/tableLayout"
+            android:stretchColumns="*"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:layout_width="match_parent"
+            tools:ignore="NestedWeights">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                tools:ignore="UselessParent">
+
+                <TableLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/amountOfPlayers"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="#FEFEFE"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/dayDuration"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="#FEFEFE"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/nightDuration"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="#FEFEFE"
+                        android:textSize="25sp" />
+
+                </TableLayout>
+
+                <TableLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/serverTime"
+                        android:layout_weight="3"
+                        android:paddingBottom="20dp"
+                        android:paddingTop="20dp"
+                        android:gravity="center"
+                        android:textColor="#FEFEFE"
+                        android:textSize="40sp" />
+
+                    <TextView
+                        android:id="@+id/durationTillSunriseOrSunset"
+                        android:layout_weight="1"
+                        android:paddingBottom="20dp"
+                        android:paddingTop="20dp"
+                        android:gravity="center"
+                        android:textColor="#FEFEFE"
+                        android:textSize="25sp" />
+
+                </TableLayout>
+
+            </TableRow>
+
+        </TableLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#0D1423"
+            android:progressTint="#135070"
+            android:max="100" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabBackground="@drawable/tab_layout_selector"
+            app:tabSelectedTextColor="@color/dark_blue"
+            app:tabTextColor="@color/white"
+            app:tabMaxWidth="0dp"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            tools:ignore="SpeakableTextPresentCheck" >
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="PLAYERS" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="MODS" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                tools:ignore="MissingClass" />
+
+    </LinearLayout>
+
+</LinearLayout>

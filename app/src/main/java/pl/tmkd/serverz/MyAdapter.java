@@ -54,8 +54,7 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
         TextView name = convertView.findViewById(R.id.name);
 
         name.setText(arrayList.get(position).getName());
-        playersNum.setText(Integer.toString(arrayList.get(position).getPlayersNum()));
-        maxPlayers.setText(Integer.toString(arrayList.get(position).getMaxPlayers()));
+        playersNum.setText((Integer.toString(arrayList.get(position).getPlayersNum()) + "/" + (Integer.toString(arrayList.get(position).getMaxPlayers()))));
         return convertView;
     }
 

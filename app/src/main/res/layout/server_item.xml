@@ -15,8 +15,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/address"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textSize="25sp"
         tools:ignore="RtlHardcoded" />
 
     <TextView
@@ -26,8 +25,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/playersNum"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textSize="25sp"
         tools:ignore="RtlHardcoded" />
 
     <TextView
@@ -38,7 +36,6 @@
         android:text="@string/maxPlayers"
         android:textColor="@android:color/white"
         android:textSize="18sp"
-        android:textStyle="bold"
         tools:ignore="RtlHardcoded" />
 
 </LinearLayout>

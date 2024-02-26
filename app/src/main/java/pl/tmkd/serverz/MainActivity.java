@@ -74,8 +74,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        menu.add(0, v.getId(), 0, "Edit");
-        menu.add(0, v.getId(), 0 , "Delete");
+        menu.add(0, v.getId(), 0, "EDIT");
+        menu.add(0, v.getId(), 0 , "DELETE");
     }
 
     @Override
@@ -86,11 +86,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         assert info != null;
         int index = info.position;
 
-            if (item.getTitle() == "Edit") {
+            if (item.getTitle() == "EDIT") {
                 editServer(dialog, index);
             }
 
-            else if (item.getTitle() == "Delete") {
+            else if (item.getTitle() == "DELETE") {
                 deleteServer(dialog, index);
             }
         return false;

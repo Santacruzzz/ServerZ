@@ -1,75 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#0D1423"
-    android:orientation="vertical"
-    tools:ignore="ExtraText">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/serverName"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
         android:gravity="center"
         android:textColor="#F4F5F9"
         android:textSize="20sp" />
 
     <TableLayout
+        android:id="@+id/tableLayout"
         android:stretchColumns="*"
-        android:layout_weight="3"
-        android:layout_height="0dp"
+        android:layout_below="@id/serverName"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent">
 
         <TableRow
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="2">
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent">
 
             <TableLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/amountOfPlayers"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="25sp"
-                    android:layout_weight="1" />
+                    android:textSize="25sp" />
+
                 <TextView
                     android:id="@+id/dayDuration"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="25sp"
-                    android:layout_weight="1" />
+                    android:textSize="25sp" />
+
                 <TextView
                     android:id="@+id/nightDuration"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="25sp"
-                    android:layout_weight="1" />
+                    android:textSize="25sp" />
 
             </TableLayout>
 
             <TableLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/serverTime"
+                    android:layout_weight="3"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="40sp"
-                    android:layout_weight="2" />
+                    android:textSize="40sp" />
+
                 <TextView
                     android:id="@+id/durationTillSunriseOrSunset"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
                     android:gravity="center"
                     android:textColor="#FEFEFE"
-                    android:textSize="25sp"
-                    android:layout_weight="1" />
+                    android:textSize="25sp" />
 
             </TableLayout>
 
@@ -79,32 +95,30 @@
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.2"
+        android:layout_height="wrap_content"
         android:background="#0D1423"
         android:progressTint="#135070"
+        android:layout_below="@id/tableLayout"
         android:max="100" />
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="wrap_content"
+        app:tabBackground="@drawable/tab_layout_selector"
+        app:tabSelectedTextColor="@color/dark_blue"
+        app:tabTextColor="@color/white"
+        android:layout_below="@id/progressBar"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_below="@id/tab_layout"
         tools:ignore="MissingClass" />
 
-</LinearLayout>
+</RelativeLayout>
