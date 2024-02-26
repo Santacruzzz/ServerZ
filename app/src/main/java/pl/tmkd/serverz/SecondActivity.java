@@ -92,7 +92,6 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         TextView dayDuration = findViewById(R.id.dayDuration);
         TextView nightDuration = findViewById(R.id.nightDuration);
         TextView durationTillSunriseOrSunset = findViewById(R.id.durationTillSunriseOrSunset);
-        progressBar.findViewById(R.id.progressBar);
 
         name.setText(server.getName());
         amountOfPlayers.setText((server.getPlayersNum()) + "/" + (server.getMaxPlayers()));

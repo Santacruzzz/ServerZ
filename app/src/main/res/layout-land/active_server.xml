@@ -104,15 +104,12 @@
 
         </TableLayout>
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
+            app:trackThickness="20dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#0D1423"
-            android:progressTint="#135070"
-            android:max="100" />
+            android:layout_width="match_parent"/>
+
     </LinearLayout>
 
     <LinearLayout

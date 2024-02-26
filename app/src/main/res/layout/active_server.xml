@@ -93,15 +93,12 @@
 
     </TableLayout>
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        app:trackThickness="10dp"
         android:layout_height="wrap_content"
-        android:background="#0D1423"
-        android:progressTint="#135070"
         android:layout_below="@id/tableLayout"
-        android:max="100" />
+        android:layout_width="match_parent"/>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
@@ -116,7 +113,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:layout_below="@id/tab_layout"
         tools:ignore="MissingClass" />
