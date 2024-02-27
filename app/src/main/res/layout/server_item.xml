@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,27 +16,61 @@
         android:layout_marginTop="16dp"
         android:text="@string/address"
         android:textColor="@android:color/white"
-        android:textSize="25sp"
+        android:textSize="20dp"
         tools:ignore="RtlHardcoded" />
 
-    <TextView
-        android:id="@+id/playersNum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/playersNum"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
-        tools:ignore="RtlHardcoded" />
 
-    <TextView
-        android:id="@+id/maxPlayers"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/maxPlayers"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        tools:ignore="RtlHardcoded" />
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:id="@+id/playersNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/playersNum"
+            android:textColor="@android:color/white"
+            android:textSize="15dp"
+            tools:ignore="RtlHardcoded"
+            android:drawablePadding="15dp"
+            android:drawableLeft="@drawable/baseline_person_24"/>
+
+        <TextView
+            android:id="@+id/maxPlayers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/maxPlayers"
+            android:textColor="@android:color/white"
+            android:textSize="15dp"
+            tools:ignore="RtlHardcoded" />
+
+        <TextView
+            android:id="@+id/serverTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingLeft="20dp"
+            android:drawableLeft="@drawable/baseline_access_time_24"
+            android:drawablePadding="15dp"
+            android:text="00"
+            android:textColor="#FEFEFE"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/isFirstPerson"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingLeft="20dp"
+            android:drawableLeft="@drawable/baseline_camera_alt_24"
+            android:drawablePadding="15dp"
+            android:text="00"
+            android:textColor="#FEFEFE"
+            android:textSize="15sp" />
+
+    </LinearLayout>
 
 </LinearLayout>

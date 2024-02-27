@@ -70,6 +70,7 @@ public class Server implements SqResponseListener, Runnable{
         started = false;
         refreshFailed = false;
         refreshTimer = refreshType.equals(RefreshType.FULL) ? TIMER_QUERY_RETRY_FAST : TIMER_QUERY_RETRY_SLOW;
+        serverTime = LocalTime.parse("00:00");
     }
 
     @Override

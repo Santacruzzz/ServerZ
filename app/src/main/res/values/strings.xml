@@ -11,7 +11,6 @@
     <string name="enter_item_name_to_add_in_list" />
     <string name="write_new_server">Write new server</string>
     <string name="text" />
-    <string name="tttt">Text</string>
     <string name="e_g_this_one">e.g this one</string>
     <string name="enter_server">Enter server</string>
     <string name="greet">greet</string>
@@ -27,8 +26,8 @@
     <string name="servertime">serverTime</string>
     <string name="amountOfPlayers" />
     <string name="serverTime" />
-    <string name="jakis_tekst">jakis tekst</string>
     <string name="save">Save</string>
     <string name="do_you_really_want_to_remove_the_server">Do you really want to remove the server?</string>
     <string name="mode">Mode</string>
+    <string name="dismiss">Dismiss</string>
 </resources>

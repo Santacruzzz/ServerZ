@@ -18,45 +18,15 @@
             android:layout_width="match_parent"
             android:background="#0D1423"/>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="0dp"
-            android:background="#0D1423">
-
-            <EditText
-                android:id="@+id/editTextIp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:inputType="number|numberDecimal"
-                android:digits="0123456789."
-                android:autofillHints=""
-                android:hint="@string/ip"
-                android:textColorHint="@color/white"
-                android:textColor="@android:color/white"
-                android:background="#0D1423" />
-
-            <EditText
-                android:id="@+id/editTextPort"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:autofillHints=""
-                android:hint="@string/port"
-                android:inputType="number"
-                android:textColorHint="@color/white"
-                android:textColor="@android:color/white"
-                android:background="#0D1423" />
-
-        </TableRow>
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="0dp"
-            android:text="@string/add_server"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingButton"
+            app:backgroundTint="@color/purple_200"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/baseline_add_24"
+            android:layout_margin="25dp"
+            android:contentDescription="TODO" />
     </LinearLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

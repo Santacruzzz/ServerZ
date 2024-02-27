@@ -25,6 +25,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,8 +39,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private ListView listView;
     private MyAdapter adapter;
     private ArrayList<Server> arrayList;
-    private EditText editTextIp;
-    private EditText editTextPort;
     private  File file;
 
 
@@ -51,10 +51,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         file = new File(this.getFileStreamPath("servers.txt").toURI());
         arrayList = new ArrayList<>();
         adapter = new MyAdapter(this, arrayList);
-        Button button = (Button) findViewById(R.id.button);
+        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.floatingButton);
         listView = findViewById(R.id.idListView);
-        editTextIp = findViewById(R.id.editTextIp);
-        editTextPort = findViewById(R.id.editTextPort);
         listView.setOnItemClickListener(this);
         button.setOnClickListener(this);
         listView.setAdapter(adapter);
@@ -74,8 +72,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        menu.add(0, v.getId(), 0, "EDIT");
-        menu.add(0, v.getId(), 0 , "DELETE");
+        menu.add(0, v.getId(), 0, "Edit");
+        menu.add(0, v.getId(), 0 , "Delete");
     }
 
     @Override
@@ -86,11 +84,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         assert info != null;
         int index = info.position;
 
-            if (item.getTitle() == "EDIT") {
+            if (item.getTitle() == "Edit") {
                 editServer(dialog, index);
             }
 
-            else if (item.getTitle() == "DELETE") {
+            else if (item.getTitle() == "Delete") {
                 deleteServer(dialog, index);
             }
         return false;
@@ -142,20 +140,27 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View view) {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.custom_edit_dialog);
+        EditText editIp = dialog.findViewById(R.id.editTextIp);
+        EditText editPort = dialog.findViewById(R.id.editTextPort);
+        Button b_save = dialog.findViewById(R.id.button_save);
+        Button b_dismiss = dialog.findViewById(R.id.button_dismiss);
+        dialog.show();
         try {
-            Server server = new Server(editTextIp.getText().toString(), Integer.parseInt(editTextPort.getText().toString()), RefreshType.INFO_ONLY);
-            if (isServerNotInList(arrayList, server)) {
-                server.setListener(adapter);
-                server.start();
-                arrayList.add(server);
-                adapter.notifyDataSetChanged();
-                editTextIp.setText("");
-                editTextPort.setText("");
-                closeKeyboard();
-                editTextIp.clearFocus();
-                editTextPort.clearFocus();
-            }
+            b_save.setOnClickListener(view1 -> {
+                Server server = new Server(editIp.getText().toString(), Integer.parseInt(editPort.getText().toString()), RefreshType.INFO_ONLY);
+                if (isServerNotInList(arrayList, server)) {
+                    server.setListener(adapter);
+                    server.start();
+                    arrayList.add(server);
+                    adapter.notifyDataSetChanged();
+                    dialog.dismiss();
+                }
+            });
+            b_dismiss.setOnClickListener(view2 -> dialog.dismiss());
         } catch (Exception e) {
             String text = "Incorrect IP address or port";
             Toast.makeText(this, text, LENGTH_SHORT).show();

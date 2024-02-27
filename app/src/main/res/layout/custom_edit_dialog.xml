@@ -9,9 +9,9 @@
 
     <TableRow
         android:id="@+id/tableRow"
-        android:layout_width="392dp"
-        android:layout_height="112dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:padding="10dp"
         android:textAlignment="center"
         android:textSize="25sp"
@@ -19,18 +19,32 @@
 
              <EditText
                  android:id="@+id/editTextIp"
-                 android:layout_width="0dp"
-                 android:layout_height="match_parent"
+                 android:layout_width="392dp"
+                 android:layout_height="90dp"
                  android:layout_weight="1"
                  android:hint="@string/ip"
                  android:textColorHint="@color/white"
                  android:textColor="@color/white"
                  android:autofillHints=""
-                 android:inputType="text" />
+                 android:inputType="number|numberDecimal"
+                 android:digits="0123456789." />
+    </TableRow>
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:textAlignment="center"
+        android:layout_below="@id/tableRow"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:inputType="number">
+
             <EditText
                 android:id="@+id/editTextPort"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="392dp"
+                android:layout_height="90dp"
                 android:layout_weight="1"
                 android:hint="@string/port"
                 android:textColorHint="@color/white"
@@ -42,7 +56,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tableRow"
+        android:layout_below="@id/tableRow2"
         android:layout_margin="15dp"
         android:layout_centerHorizontal="true">
 
@@ -50,9 +64,10 @@
             android:id="@+id/button_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAllCaps="false"
             android:text="@string/save"
-            android:textStyle="bold"
             android:textColor="@color/white"
+            android:background="@color/purple_700"
             android:textSize="20sp" />
 
         <Button
@@ -60,10 +75,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_toRightOf="@id/button_save"
-            android:text="Dismiss"
-            android:textStyle="bold"
-            android:textColor="#FF0000"
+            android:layout_toEndOf="@id/button_save"
+            android:textAllCaps="false"
+            android:text="@string/dismiss"
+            android:textColor="@color/purple_200"
+            android:background="@color/purple_700"
             android:textSize="20sp" />
     </RelativeLayout>
 
