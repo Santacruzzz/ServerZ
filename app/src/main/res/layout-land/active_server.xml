@@ -6,7 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#0D1423"
     android:orientation="horizontal"
-    tools:ignore="ExtraText">
+    tools:ignore="ExtraText"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -14,6 +15,7 @@
         android:orientation="vertical"
         android:layout_weight="1">
         <TextView
+            android:text="Server name"
             android:id="@+id/serverName"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -50,28 +52,37 @@
                     android:layout_weight="1">
 
                     <TextView
+                        android:text="00"
                         android:id="@+id/amountOfPlayers"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:gravity="center"
+                        android:gravity="start|center"
                         android:textColor="#FEFEFE"
-                        android:textSize="25sp" />
+                        android:textSize="25sp"
+                        android:drawablePadding="15dp"
+                        android:drawableLeft="@drawable/baseline_person_24"/>
 
                     <TextView
+                        android:text="00"
                         android:id="@+id/dayDuration"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:gravity="center"
+                        android:gravity="start|center"
                         android:textColor="#FEFEFE"
-                        android:textSize="25sp" />
+                        android:textSize="25sp"
+                        android:drawablePadding="15dp"
+                        android:drawableLeft="@drawable/baseline_sunny_24"/>
 
                     <TextView
+                        android:text="00"
                         android:id="@+id/nightDuration"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:gravity="center"
+                        android:gravity="start|center"
                         android:textColor="#FEFEFE"
-                        android:textSize="25sp" />
+                        android:textSize="25sp"
+                        android:drawablePadding="15dp"
+                        android:drawableLeft="@drawable/baseline_nightlight_24"/>
 
                 </TableLayout>
 
@@ -81,22 +92,24 @@
                     android:layout_weight="1">
 
                     <TextView
+                        android:text="00"
                         android:id="@+id/serverTime"
                         android:layout_weight="3"
-                        android:paddingBottom="20dp"
-                        android:paddingTop="20dp"
-                        android:gravity="center"
+                        android:gravity="end|center"
+                        android:paddingRight="30dp"
                         android:textColor="#FEFEFE"
                         android:textSize="40sp" />
 
                     <TextView
+                        android:text="00"
                         android:id="@+id/durationTillSunriseOrSunset"
                         android:layout_weight="1"
-                        android:paddingBottom="20dp"
-                        android:paddingTop="20dp"
-                        android:gravity="center"
+                        android:gravity="end|center"
                         android:textColor="#FEFEFE"
-                        android:textSize="25sp" />
+                        android:textSize="25sp"
+                        android:drawablePadding="15dp"
+                        android:paddingRight="15dp"
+                        android:drawableRight="@drawable/baseline_nightlight_24" />
 
                 </TableLayout>
 
@@ -123,8 +136,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabBackground="@drawable/tab_layout_selector"
-            app:tabSelectedTextColor="@color/dark_blue"
-            app:tabTextColor="@color/white"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/light_gray"
             app:tabMaxWidth="0dp"
             app:tabGravity="fill"
             app:tabMode="fixed"
@@ -141,7 +154,6 @@
                 android:text="MODS" />
 
             </com.google.android.material.tabs.TabLayout>
-
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewpager"
