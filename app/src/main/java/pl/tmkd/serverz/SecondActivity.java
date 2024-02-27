@@ -1,19 +1,18 @@
 package pl.tmkd.serverz;
 
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
-import static pl.tmkd.serverz.sq.Constants.TAG_SECOND;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -26,7 +25,7 @@ import pl.tmkd.serverz.sq.ServerListener;
 public class SecondActivity extends AppCompatActivity implements ServerListener, Serializable {
     private View view;
     private TextView textView;
-    private ProgressBar progressBar;
+    private LinearProgressIndicator progressBar;
     Server server;
     public TabLayout tabLayout;
     private ViewPagerAdapter viewPagerAdapter;
@@ -99,6 +98,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         dayDuration.setText(server.getDayDuration());
         nightDuration.setText(server.getNightDuration());
         durationTillSunriseOrSunset.setText(server.getDurationTillSunriseOrSunset());
+        progressBar.setIndeterminate(false);
         progressBar.setProgress(server.getDayOrNightProgress());
     }
 

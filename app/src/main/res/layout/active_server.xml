@@ -114,6 +114,7 @@
         app:trackThickness="10dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/tableLayout"
+        android:indeterminate="true"
         android:layout_width="match_parent"/>
 
     <com.google.android.material.tabs.TabLayout

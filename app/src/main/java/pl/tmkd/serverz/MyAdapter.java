@@ -1,7 +1,5 @@
 package pl.tmkd.serverz;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 
 import android.annotation.SuppressLint;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -50,15 +47,19 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
         if (null == convertView)
             convertView = LayoutInflater.from(context).inflate(R.layout.server_item, parent, false);
         TextView playersNum = convertView.findViewById(R.id.playersNum);
-        TextView maxPlayers = convertView.findViewById(R.id.maxPlayers);
         TextView name = convertView.findViewById(R.id.name);
+        TextView map = convertView.findViewById(R.id.map);
         TextView time = convertView.findViewById(R.id.serverTime);
         TextView firstPerson = convertView.findViewById(R.id.isFirstPerson);
+        TextView address = convertView.findViewById(R.id.address);
 
-        name.setText(arrayList.get(position).getName());
-        playersNum.setText((Integer.toString(arrayList.get(position).getPlayersNum()) + "/" + (Integer.toString(arrayList.get(position).getMaxPlayers()))));
-        time.setText(arrayList.get(position).getServerTime());
-        firstPerson.setText(String.valueOf(arrayList.get(position).isFirstPerson()));
+        Server server = arrayList.get(position);
+        name.setText(server.getName());
+        playersNum.setText(server.getPlayersNum() + "/" + server.getMaxPlayers());
+        time.setText(server.getServerTime());
+        firstPerson.setText(server.isFirstPerson() ? "1pp" : "3pp");
+        map.setText(server.getMap());
+        address.setText(server.getAddress());
         return convertView;
     }
 
