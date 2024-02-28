@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="icon_padding">4dp</dimen>
+    <dimen name="server_item_details_item_width">82dp</dimen>
+</resources>

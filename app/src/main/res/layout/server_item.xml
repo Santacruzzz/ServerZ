@@ -3,15 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_gravity="center"
-        android:background="@drawable/border_right"
-        android:paddingEnd="8dp"
         android:orientation="vertical">
 
         <TextView
@@ -19,84 +16,68 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Server name"
-            android:paddingStart="5dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="12dp"
+            android:paddingHorizontal="6dp"
             android:textColor="@android:color/white"
             android:textSize="20dp"
             android:layout_gravity="center"/>
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/map"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Server map"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="15dp"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="123.123.123.123:33333"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:textColor="@color/gray"
-                android:textSize="15dp"
-                android:layout_gravity="center"/>
-
-        </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp"
+        android:paddingHorizontal="8dp"
+        android:paddingBottom="8dp"
         android:minWidth="105dp"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/playersNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="2dp"
             android:text="12/55"
-            android:textColor="@android:color/white"
+            android:width="@dimen/server_item_details_item_width"
+            android:textColor="@color/server_item_detail_item_color"
             android:textSize="15dp"
-            tools:ignore="RtlHardcoded"
-            android:drawablePadding="15dp"
+            android:drawablePadding="@dimen/icon_padding"
             android:drawableLeft="@drawable/baseline_person_24"/>
 
         <TextView
             android:id="@+id/serverTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="2dp"
+            android:paddingStart="8dp"
+            android:width="@dimen/server_item_details_item_width"
+            android:textColor="@color/server_item_detail_item_color"
             android:drawableLeft="@drawable/baseline_access_time_24"
-            android:drawablePadding="15dp"
+            android:drawablePadding="@dimen/icon_padding"
             android:text="00"
-            android:textColor="#FEFEFE"
             android:textSize="15sp" />
 
         <TextView
             android:id="@+id/isFirstPerson"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="2dp"
+            android:paddingStart="8dp"
+            android:width="@dimen/server_item_details_item_width"
             android:drawableLeft="@drawable/baseline_camera_alt_24"
-            android:drawablePadding="15dp"
+            android:drawablePadding="@dimen/icon_padding"
             android:text="00"
-            android:textColor="#FEFEFE"
+            android:textColor="@color/server_item_detail_item_color"
             android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/map"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="Server map"
+            android:textColor="@color/server_item_detail_item_color"
+            android:textSize="15dp"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 

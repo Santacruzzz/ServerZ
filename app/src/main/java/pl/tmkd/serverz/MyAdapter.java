@@ -51,7 +51,6 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
         TextView map = convertView.findViewById(R.id.map);
         TextView time = convertView.findViewById(R.id.serverTime);
         TextView firstPerson = convertView.findViewById(R.id.isFirstPerson);
-        TextView address = convertView.findViewById(R.id.address);
 
         Server server = arrayList.get(position);
         name.setText(server.getName());
@@ -59,7 +58,6 @@ public class MyAdapter extends BaseAdapter implements ServerListener {
         time.setText(server.getServerTime());
         firstPerson.setText(server.isFirstPerson() ? "1pp" : "3pp");
         map.setText(server.getMap());
-        address.setText(server.getAddress());
         return convertView;
     }
 
