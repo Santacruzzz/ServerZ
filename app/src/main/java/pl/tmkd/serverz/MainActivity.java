@@ -10,6 +10,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -78,8 +79,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Dialog dialog = createDialog();
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         assert info != null;
         int index = info.position;
@@ -100,23 +100,13 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         EditText editPort = dialog.findViewById(R.id.editTextPort);
         Button b_save = dialog.findViewById(R.id.button_save);
         Button b_dismiss = dialog.findViewById(R.id.button_dismiss);
+
         dialog.show();
-        editIp.setText((arrayList.get(index)).getIp());
-        editPort.setText(String.valueOf((arrayList.get(index)).getPort()));
+        editIp.setText(arrayList.get(index).getIp());
+        editPort.setText(String.valueOf(arrayList.get(index).getPort()));
 
         b_save.setOnClickListener(v -> {
-            Server server = arrayList.get(index);
-            server.stop();
-            String ip = editIp.getText().toString();
-            int port = Integer.parseInt(editPort.getText().toString());
-            if (!isIpAndPortInList(arrayList, ip, port)) {
-                server.setIp(ip);
-                server.setPort(port);
-                server.start();
-                adapter.notifyDataSetChanged();
-                dialog.dismiss();
-            }
-            dialog.dismiss();
+            isEditedServerCorrect(dialog, index, editIp, editPort);
         });
 
         b_dismiss.setOnClickListener(v -> dialog.dismiss());
@@ -141,31 +131,82 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public void onClick(View view) {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Dialog dialog = createDialog();
         dialog.setContentView(R.layout.custom_edit_dialog);
+
         EditText editIp = dialog.findViewById(R.id.editTextIp);
         EditText editPort = dialog.findViewById(R.id.editTextPort);
         Button b_save = dialog.findViewById(R.id.button_save);
         Button b_dismiss = dialog.findViewById(R.id.button_dismiss);
         dialog.show();
+
+        b_save.setOnClickListener(view1 -> {
+            isNewServerCorrect(dialog, editIp, editPort);
+        });
+
+        b_dismiss.setOnClickListener(view2 -> dialog.dismiss());
+    }
+
+    public Dialog createDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
+    public void isNewServerCorrect(Dialog dialog, EditText editIp, EditText editPort) {
         try {
-            b_save.setOnClickListener(view1 -> {
-                Server server = new Server(editIp.getText().toString(), Integer.parseInt(editPort.getText().toString()), RefreshType.INFO_ONLY);
-                if (isServerNotInList(arrayList, server)) {
-                    server.setListener(adapter);
-                    server.start();
-                    arrayList.add(server);
-                    adapter.notifyDataSetChanged();
-                    dialog.dismiss();
-                }
-            });
-            b_dismiss.setOnClickListener(view2 -> dialog.dismiss());
-        } catch (Exception e) {
-            String text = "Incorrect IP address or port";
-            Toast.makeText(this, text, LENGTH_SHORT).show();
+            boolean isIpEmpty = editIp.getText().toString().isEmpty();
+            Server server = new Server(editIp.getText().toString(), Integer.parseInt(editPort.getText().toString()), RefreshType.INFO_ONLY);
+            if (isServerNotInList(arrayList, server) && !isIpEmpty) {
+                addServerToList(server, dialog);
+            } else {
+                showIncorrectDataMessage();
+            }
+        } catch (NumberFormatException | NetworkOnMainThreadException e) {
+            showIncorrectDataMessage();
             Log.e(TAG_MAIN, "Wrong data" + e);
         }
+    }
+
+    public void isEditedServerCorrect(Dialog dialog, int index, EditText editIp, EditText editPort) {
+        try {
+            Server server = arrayList.get(index);
+            server.stop();
+            String ip = editIp.getText().toString();
+            boolean isIpEmpty = ip.isEmpty();
+            int port = Integer.parseInt(editPort.getText().toString());
+            if (!isIpAndPortInList(arrayList, ip, port) && !isIpEmpty) {
+                editServerAddress(server, ip, port, dialog);
+            } else {
+                showIncorrectDataMessage();
+                editIp.setText(server.getIp());
+                editPort.setText(String.valueOf(server.getPort()));
+            }
+        } catch (NumberFormatException | NetworkOnMainThreadException e) {
+            showIncorrectDataMessage();
+            Log.e(TAG_MAIN, "Wrong data" + e);
+        }
+    }
+
+    public void showIncorrectDataMessage() {
+        String text = "Incorrect IP address or port";
+        Toast.makeText(this, text, LENGTH_SHORT).show();
+    }
+
+    public void addServerToList(Server server, Dialog dialog) {
+        server.setListener(adapter);
+        server.start();
+        arrayList.add(server);
+        adapter.notifyDataSetChanged();
+        dialog.dismiss();
+    }
+
+    public void editServerAddress(Server server, String ip, int port, Dialog dialog) {
+        server.setIp(ip);
+        server.setPort(port);
+        server.start();
+        adapter.notifyDataSetChanged();
+        dialog.dismiss();
     }
 
     @Override
@@ -191,15 +232,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             DataStorageManager.saveData(addressList, file);
         } catch (IOException e) {
             Log.e(TAG_MAIN, "Exception while saving file: " + e);
-        }
-    }
-
-    private void closeKeyboard() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
