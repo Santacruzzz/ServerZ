@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         super.onCreate(savedInstanceState);
         View view = getLayoutInflater().inflate(R.layout.active_server, null);
         setContentView(view);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Intent intent = getIntent();
         String ip = intent.getStringExtra("ip");
@@ -124,6 +126,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     protected void onResume() {
         super.onResume();
         server.start();
+
     }
 
     @Override
