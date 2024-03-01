@@ -3,11 +3,10 @@ package pl.tmkd.serverz;
 import static android.widget.Toast.LENGTH_SHORT;
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 import static pl.tmkd.serverz.sq.msg.Utils.isIpAndPortInList;
-import static pl.tmkd.serverz.sq.msg.Utils.isServerNotInList;
+import static pl.tmkd.serverz.sq.msg.Utils.isServerInList;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
@@ -16,7 +15,6 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,10 +34,10 @@ import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerAddress;
 
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
-    private ListView listView;
-    private MyAdapter adapter;
-    private ArrayList<Server> arrayList;
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
+    private ListView serversView;
+    private ServersAdapter serversAdapter;
+    private ArrayList<Server> servers;
     private  File file;
 
 
@@ -48,103 +46,94 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         super.onCreate(savedInstanceState);
         View mainView = getLayoutInflater().inflate(R.layout.layout_main, null);
         setContentView(mainView);
-        ArrayList<ServerAddress> addressList = new ArrayList<>();
         file = new File(this.getFileStreamPath("servers.txt").toURI());
-        arrayList = new ArrayList<>();
-        adapter = new MyAdapter(this, arrayList);
-        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.floatingButton);
-        listView = findViewById(R.id.idListView);
-        listView.setOnItemClickListener(this);
-        button.setOnClickListener(this);
-        listView.setAdapter(adapter);
-        registerForContextMenu(listView);
+        servers = new ArrayList<>();
+        serversAdapter = new ServersAdapter(this, servers);
+        FloatingActionButton addServerButton = (FloatingActionButton) findViewById(R.id.floatingButton);
+        serversView = findViewById(R.id.idServersView);
+        serversView.setOnItemClickListener(this);
+        addServerButton.setOnClickListener(this::onNewServerButtonClick);
+        serversView.setAdapter(serversAdapter);
+        registerForContextMenu(serversView);
         loadServers();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Server server = servers.get(position);
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-        intent.putExtra("ip", arrayList.get(position).getIp());
-        intent.putExtra("port", arrayList.get(position).getPort());
+        intent.putExtra("ip", server.getIp());
+        intent.putExtra("port", server.getPort());
         startActivity(intent);
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
 
-        menu.add(0, v.getId(), 0, "Edit");
-        menu.add(0, v.getId(), 0 , "Delete");
+        menu.add(0, view.getId(), 0, "Edit");
+        menu.add(0, view.getId(), 1 , "Delete");
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         Dialog dialog = createDialog();
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        assert info != null;
-        int index = info.position;
-
+        if (info != null) {
             if (item.getTitle() == "Edit") {
-                editServer(dialog, index);
+                showEditServerDialog(dialog, info.position);
+            } else if (item.getTitle() == "Delete") {
+                showDeleteServerDialog(dialog, info.position);
             }
-
-            else if (item.getTitle() == "Delete") {
-                deleteServer(dialog, index);
-            }
-        return false;
+        }
+        return true;
     }
 
-    public void editServer(Dialog dialog, int index) {
-        dialog.setContentView(R.layout.custom_edit_dialog);
+    public void showEditServerDialog(Dialog dialog, int serverIndex) {
+        Server server = servers.get(serverIndex);
+        dialog.setContentView(R.layout.server_dialog);
         EditText editIp = dialog.findViewById(R.id.editTextIp);
         EditText editPort = dialog.findViewById(R.id.editTextPort);
-        Button b_save = dialog.findViewById(R.id.button_save);
-        Button b_dismiss = dialog.findViewById(R.id.button_dismiss);
+        Button saveButton = dialog.findViewById(R.id.saveButton);
+        Button dismissButton = dialog.findViewById(R.id.dismissButton);
 
         dialog.show();
-        editIp.setText(arrayList.get(index).getIp());
-        editPort.setText(String.valueOf(arrayList.get(index).getPort()));
+        editIp.setText(server.getIp());
+        editPort.setText(String.valueOf(server.getPort()));
 
-        b_save.setOnClickListener(v -> {
-            isEditedServerCorrect(dialog, index, editIp, editPort);
-        });
-
-        b_dismiss.setOnClickListener(v -> dialog.dismiss());
+        saveButton.setOnClickListener(v -> editServer(dialog, serverIndex, editIp, editPort));
+        dismissButton.setOnClickListener(v -> dialog.dismiss());
     }
 
-    public void deleteServer(Dialog dialog, int index) {
+    public void showDeleteServerDialog(Dialog dialog, int serverIndex) {
         dialog.setContentView(R.layout.custome_delete_dialog);
-        Button b_ok = dialog.findViewById(R.id.button_ok);
-        Button b_no= dialog.findViewById(R.id.button_no);
+        Button yesButton = dialog.findViewById(R.id.yesButton);
+        Button noButton = dialog.findViewById(R.id.noButton);
         dialog.show();
 
-        b_ok.setOnClickListener(v -> {
-            Server server = arrayList.get(index);
+        yesButton.setOnClickListener(v -> {
+            Server server = servers.get(serverIndex);
             server.stop();
-            arrayList.remove(server);
-            adapter.notifyDataSetChanged();
+            servers.remove(server);
+            serversAdapter.notifyDataSetChanged();
             dialog.dismiss();
         });
 
-        b_no.setOnClickListener(v -> dialog.dismiss());
+        noButton.setOnClickListener(v -> dialog.dismiss());
     }
 
-    @Override
-    public void onClick(View view) {
+    public void onNewServerButtonClick(View view) {
         Dialog dialog = createDialog();
-        dialog.setContentView(R.layout.custom_edit_dialog);
+        dialog.setContentView(R.layout.server_dialog);
 
         EditText editIp = dialog.findViewById(R.id.editTextIp);
         EditText editPort = dialog.findViewById(R.id.editTextPort);
-        Button b_save = dialog.findViewById(R.id.button_save);
-        Button b_dismiss = dialog.findViewById(R.id.button_dismiss);
+        Button saveButton = dialog.findViewById(R.id.saveButton);
+        Button dismissButton = dialog.findViewById(R.id.dismissButton);
         dialog.show();
 
-        b_save.setOnClickListener(view1 -> {
-            isNewServerCorrect(dialog, editIp, editPort);
-        });
-
-        b_dismiss.setOnClickListener(view2 -> dialog.dismiss());
+        saveButton.setOnClickListener(view1 -> addNewServer(dialog, editIp, editPort));
+        dismissButton.setOnClickListener(view2 -> dialog.dismiss());
     }
 
     public Dialog createDialog() {
@@ -153,83 +142,94 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         return dialog;
     }
 
-    public void isNewServerCorrect(Dialog dialog, EditText editIp, EditText editPort) {
+    public void addNewServer(Dialog dialog, EditText editTextIp, EditText editTextPort) {
         try {
-            boolean isIpEmpty = editIp.getText().toString().isEmpty();
-            Server server = new Server(editIp.getText().toString(), Integer.parseInt(editPort.getText().toString()), RefreshType.INFO_ONLY);
-            if (isServerNotInList(arrayList, server) && !isIpEmpty) {
-                addServerToList(server, dialog);
-            } else {
-                showIncorrectDataMessage();
+            String serverIp = editTextIp.getText().toString();
+            int serverPort = Integer.parseInt(editTextPort.getText().toString());
+            Server server = new Server(serverIp, serverPort, RefreshType.INFO_ONLY);
+
+            if (serverIp.isEmpty()) {
+                throw new Exception("Empty IP address");
             }
+            if (isServerInList(servers, server)) {
+                throw new Exception("Server already in list");
+            }
+            addServerToList(server);
+            dialog.dismiss();
+
         } catch (NumberFormatException | NetworkOnMainThreadException e) {
-            showIncorrectDataMessage();
+            Toast.makeText(this, "Incorrect IP address or port", LENGTH_SHORT).show();
             Log.e(TAG_MAIN, "Wrong data" + e);
+        } catch (Exception e) {
+            String message = e.getMessage();
+            Toast.makeText(this, message, LENGTH_SHORT).show();
         }
     }
 
-    public void isEditedServerCorrect(Dialog dialog, int index, EditText editIp, EditText editPort) {
+    public void editServer(Dialog dialog, int serverIndex, EditText editIp, EditText editPort) {
+        Server server = servers.get(serverIndex);
         try {
-            Server server = arrayList.get(index);
             server.stop();
-            String ip = editIp.getText().toString();
-            boolean isIpEmpty = ip.isEmpty();
-            int port = Integer.parseInt(editPort.getText().toString());
-            if (!isIpAndPortInList(arrayList, ip, port) && !isIpEmpty) {
-                editServerAddress(server, ip, port, dialog);
-            } else {
-                showIncorrectDataMessage();
-                editIp.setText(server.getIp());
-                editPort.setText(String.valueOf(server.getPort()));
+            String newIp = editIp.getText().toString();
+            int newPort = Integer.parseInt(editPort.getText().toString());
+
+            if (isIpAndPortInList(servers, newIp, newPort)) {
+                throw new Exception("Server already in the list");
             }
+            if (newIp.isEmpty()) {
+                throw new Exception("Incorrect IP address");
+            }
+            editServerAddress(server, newIp, newPort);
+            dialog.dismiss();
+
+
         } catch (NumberFormatException | NetworkOnMainThreadException e) {
-            showIncorrectDataMessage();
-            Log.e(TAG_MAIN, "Wrong data" + e);
+            Toast.makeText(this, "Incorrect IP address or port", LENGTH_SHORT).show();
+            Log.e(TAG_MAIN, "Wrong data: " + e);
+        } catch (Exception e) {
+            String message = e.getMessage();
+            Toast.makeText(this, message, LENGTH_SHORT).show();
+        } finally {
+            editIp.setText(server.getIp());
+            editPort.setText(String.valueOf(server.getPort()));
         }
     }
 
-    public void showIncorrectDataMessage() {
-        String text = "Incorrect IP address or port";
-        Toast.makeText(this, text, LENGTH_SHORT).show();
-    }
-
-    public void addServerToList(Server server, Dialog dialog) {
-        server.setListener(adapter);
+    public void addServerToList(Server server) {
+        server.setListener(serversAdapter);
         server.start();
-        arrayList.add(server);
-        adapter.notifyDataSetChanged();
-        dialog.dismiss();
+        servers.add(server);
+        serversAdapter.notifyDataSetChanged();
     }
 
-    public void editServerAddress(Server server, String ip, int port, Dialog dialog) {
+    public void editServerAddress(Server server, String ip, int port) {
         server.setIp(ip);
         server.setPort(port);
         server.start();
-        adapter.notifyDataSetChanged();
-        dialog.dismiss();
+        serversAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.startServers();
+        serversAdapter.startServers();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        adapter.stopServers();
+        serversAdapter.stopServers();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        ArrayList<ServerAddress> addressList = new ArrayList<>();
-        for (Server server : arrayList) {
-            addressList.add(new ServerAddress(server.getPort(), server.getIp()));
+        ArrayList<ServerAddress> addresses = new ArrayList<>();
+        for (Server server : servers) {
+            addresses.add(new ServerAddress(server.getPort(), server.getIp()));
         }
         try {
-            DataStorageManager.saveData(addressList, file);
+            DataStorageManager.saveData(addresses, file);
         } catch (IOException e) {
             Log.e(TAG_MAIN, "Exception while saving file: " + e);
         }
@@ -241,11 +241,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
             for (ServerAddress address : addresses) {
                 Server server = new Server(address.getIp(), address.getPort(), RefreshType.INFO_ONLY);
-                server.setListener(adapter);
-                arrayList.add(server);
+                server.setListener(serversAdapter);
+                servers.add(server);
             }
         } catch (Exception e) {
-            Log.e(TAG_MAIN, String.valueOf(e));
+            Log.e(TAG_MAIN, "Exception while reading file: " + e);
         }
     }
 }

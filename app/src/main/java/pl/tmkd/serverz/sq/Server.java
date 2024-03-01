@@ -192,8 +192,10 @@ public class Server implements SqResponseListener, Runnable{
             ingameMinutesToSunriseOrSunset = 0;
             if (serverTime.isBefore(LocalTime.MIDNIGHT)) {
                 ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, LocalTime.MIDNIGHT);
+                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(LocalTime.MIDNIGHT, SUNRISE_TIME);
+            } else {
+                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, SUNRISE_TIME);
             }
-            ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, SUNRISE_TIME);
             tillSunsetOrSunrise = formatDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / (dayTimeMult * nightTimeMult))));
         }
     }

@@ -72,7 +72,6 @@ public class Utils {
     public static String formatDuration(Duration duration) {
         long hours = duration.toHours();
         long minutes = (duration.toMinutes() % 60);
-        long seconds = (duration.getSeconds() % 60);
 
         ArrayList<String> result = new ArrayList<>();
         if (hours > 0) {
@@ -81,22 +80,20 @@ public class Utils {
         if (minutes > 0) {
             result.add(String.format(Locale.getDefault(), "%dm", minutes));
         }
-        if (seconds > 0) {
-            result.add(String.format(Locale.getDefault(), "%ds", seconds));
-        }
         if (result.size() == 0) {
-            return "Now";
+            return "<1m";
         }
 
         return String.join(" ", result);
     }
 
-    public static boolean isServerNotInList(ArrayList<Server> servers, Server server) {
+    public static boolean isServerInList(ArrayList<Server> servers, Server server) {
         for (Server item : servers) {
             if (item.equals(server)) {
-                return false;
+                return true;
             }
-        }return true;
+        }
+        return false;
     }
 
     public static boolean isIpAndPortInList(ArrayList<Server> servers, String ip, int port) {

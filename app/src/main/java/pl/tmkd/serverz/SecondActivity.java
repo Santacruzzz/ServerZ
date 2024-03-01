@@ -124,9 +124,9 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     }
 
     public void changeIconWhenIsDayOrNightTime(TextView durationTillSunriseOrSunset) {
-        Resources res = durationTillSunriseOrSunset.getContext().getResources();
+        Resources res = getResources();
         Drawable iconNight = ResourcesCompat.getDrawable(res, R.drawable.baseline_nightlight_24, null);
-        Drawable iconDay= ResourcesCompat.getDrawable(res, R.drawable.baseline_sunny_24, null);
+        Drawable iconDay = ResourcesCompat.getDrawable(res, R.drawable.baseline_sunny_24, null);
         if (server.isDaytime()) {
             durationTillSunriseOrSunset.setCompoundDrawablesWithIntrinsicBounds(null, null, iconNight, null);
         } else {
@@ -145,10 +145,9 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
 
     @Override
     public void onServerInfoRefreshFailed(Server server) {
-        String text = "Refresh failed!";
         runOnUiThread(()-> {
-//            Toast.makeText(itemsAdapter.getContext(), text, LENGTH_SHORT).show();
-            Log.e(TAG_MAIN, text);
+            // TODO handling for unsuccessful refresh
+            Log.e(TAG_MAIN, "Refresh failed!");
         });
     }
 

@@ -61,7 +61,7 @@
         android:layout_centerHorizontal="true">
 
         <Button
-            android:id="@+id/button_save"
+            android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
@@ -71,11 +71,11 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/button_dismiss"
+            android:id="@+id/dismissButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_toEndOf="@id/button_save"
+            android:layout_toEndOf="@id/saveButton"
             android:textAllCaps="false"
             android:text="@string/dismiss"
             android:textColor="@color/purple_200"

@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerListener;
 
-public class MyAdapter extends BaseAdapter implements ServerListener {
+public class ServersAdapter extends BaseAdapter implements ServerListener {
     private final Context context;
     final ArrayList<Server> arrayList;
 
-    public MyAdapter(Context context, ArrayList<Server> arrayList) {
+    public ServersAdapter(Context context, ArrayList<Server> arrayList) {
         this.context = context;
         this.arrayList = arrayList;
     }
