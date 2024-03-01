@@ -4,7 +4,9 @@ import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -103,10 +106,11 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         serverTime.setText(server.getServerTime());
         dayDuration.setText(server.getDayDuration());
         nightDuration.setText(server.getNightDuration());
-        durationTillSunriseOrSunset.setText(server.getDurationTillSunriseOrSunset());
+        durationTillSunriseOrSunset.setText(server.getDurationTillSunriseOrSunset() + " till");
         progressBar.setIndeterminate(false);
         progressBar.setProgress(server.getDayOrNightProgress());
         setProgressColor(progress);
+        changeIconWhenIsDayOrNightTime(durationTillSunriseOrSunset);
     }
 
     public void setProgressColor(TextView progress) {
@@ -116,6 +120,17 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         } else {
             progress.setText(server.getDayOrNightProgress() + "%");
             progress.setTextColor(Color.BLACK);
+        }
+    }
+
+    public void changeIconWhenIsDayOrNightTime(TextView durationTillSunriseOrSunset) {
+        Resources res = durationTillSunriseOrSunset.getContext().getResources();
+        Drawable iconNight = ResourcesCompat.getDrawable(res, R.drawable.baseline_nightlight_24, null);
+        Drawable iconDay= ResourcesCompat.getDrawable(res, R.drawable.baseline_sunny_24, null);
+        if (server.isDaytime()) {
+            durationTillSunriseOrSunset.setCompoundDrawablesWithIntrinsicBounds(null, null, iconNight, null);
+        } else {
+            durationTillSunriseOrSunset.setCompoundDrawablesWithIntrinsicBounds(null, null, iconDay,null);
         }
     }
 

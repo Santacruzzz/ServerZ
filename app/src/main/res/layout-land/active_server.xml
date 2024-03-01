@@ -118,7 +118,7 @@
                         android:textColor="#FEFEFE"
                         android:textSize="25sp"
                         android:drawablePadding="15dp"
-                        android:drawableRight="@drawable/baseline_nightlight_24" />
+                        app:drawableRightCompat="@drawable/baseline_sunny_24" />
 
                 </TableLayout>
 
@@ -143,7 +143,8 @@
                 android:background="#00000000"
                 android:gravity="center"
                 android:layout_height="20dp"
-                android:layout_width="match_parent"/>
+                android:layout_width="match_parent"
+                />
         </RelativeLayout>
 
     </LinearLayout>
