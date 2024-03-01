@@ -1,15 +1,14 @@
 package pl.tmkd.serverz;
 
-import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -51,6 +50,7 @@ public class ServersAdapter extends BaseAdapter implements ServerListener {
         TextView map = convertView.findViewById(R.id.map);
         TextView time = convertView.findViewById(R.id.serverTime);
         TextView firstPerson = convertView.findViewById(R.id.isFirstPerson);
+        LinearLayout mainLayout = convertView.findViewById(R.id.serverItemBackground);
 
         Server server = arrayList.get(position);
         name.setText(server.getName());
@@ -58,6 +58,11 @@ public class ServersAdapter extends BaseAdapter implements ServerListener {
         time.setText(server.getServerTime());
         firstPerson.setText(server.isFirstPerson() ? "1pp" : "3pp");
         map.setText(server.getMap());
+        if (server.hasRefreshFailed()) {
+            mainLayout.setBackgroundResource(R.color.failed_server_background);
+        } else {
+            mainLayout.setBackgroundColor(Color.TRANSPARENT);
+        }
         return convertView;
     }
 
@@ -68,10 +73,7 @@ public class ServersAdapter extends BaseAdapter implements ServerListener {
 
     @Override
     public void onServerInfoRefreshFailed(Server server) {
-        String text = "Refresh failed!";
-        ((Activity)context).runOnUiThread(()-> {
-            Log.e(TAG_MAIN, text);
-        });
+        ((Activity)context).runOnUiThread(this::notifyDataSetChanged);
     }
 
     public void stopServers() {

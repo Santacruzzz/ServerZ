@@ -3,7 +3,6 @@ package pl.tmkd.serverz.sq;
 import static pl.tmkd.serverz.sq.Constants.SUNRISE_TIME;
 import static pl.tmkd.serverz.sq.Constants.SUNSET_TIME;
 import static pl.tmkd.serverz.sq.Constants.TAG_SERVER;
-import static pl.tmkd.serverz.sq.Constants.TAG_SQ;
 import static pl.tmkd.serverz.sq.Constants.TIMER_QUERY_RETRY_FAST;
 import static pl.tmkd.serverz.sq.Constants.TIMER_QUERY_RETRY_SLOW;
 import static pl.tmkd.serverz.sq.msg.Utils.formatDuration;
@@ -18,11 +17,8 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import pl.tmkd.serverz.sq.msg.Player;
 import pl.tmkd.serverz.sq.msg.ServerInfoResponse;
@@ -71,6 +67,7 @@ public class Server implements SqResponseListener, Runnable{
         refreshFailed = false;
         refreshTimer = refreshType.equals(RefreshType.FULL) ? TIMER_QUERY_RETRY_FAST : TIMER_QUERY_RETRY_SLOW;
         serverTime = LocalTime.parse("00:00");
+        name = getAddress();
     }
 
     @Override
@@ -124,9 +121,9 @@ public class Server implements SqResponseListener, Runnable{
     }
 
     @Override
-    public void onServerRetryLimitReached() {
+    public void onServerRefreshFailed() {
+        Log.w(TAG_SERVER, getAddress() + " :: onServerRefreshFailed");
         refreshFailed = true;
-        Log.w(TAG_SERVER, getAddress() + " :: onServerRetryLimitReached");
         stop();
         if (null != listener)
             listener.onServerInfoRefreshFailed(this);
@@ -190,8 +187,9 @@ public class Server implements SqResponseListener, Runnable{
         tillSunsetOrSunrise = formatDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / dayTimeMult)));
         if (!isDaytime()) {
             ingameMinutesToSunriseOrSunset = 0;
-            if (serverTime.isBefore(LocalTime.MIDNIGHT)) {
-                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, LocalTime.MIDNIGHT);
+            LocalTime oneSecondToMidnight = LocalTime.MIDNIGHT.minus(Duration.ofSeconds(1));
+            if (serverTime.isBefore(oneSecondToMidnight)) {
+                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, oneSecondToMidnight);
                 ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(LocalTime.MIDNIGHT, SUNRISE_TIME);
             } else {
                 ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, SUNRISE_TIME);
@@ -298,7 +296,7 @@ public class Server implements SqResponseListener, Runnable{
         return (int) (100 - (ingameMinutesToSunriseOrSunset / minutesInNight) * 100);
     }
 
-    public boolean isRefreshFailed() {
+    public boolean hasRefreshFailed() {
         return refreshFailed;
     }
 }

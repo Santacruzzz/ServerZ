@@ -72,6 +72,7 @@ public class Utils {
     public static String formatDuration(Duration duration) {
         long hours = duration.toHours();
         long minutes = (duration.toMinutes() % 60);
+        long seconds = (duration.getSeconds() % 60);
 
         ArrayList<String> result = new ArrayList<>();
         if (hours > 0) {
@@ -79,6 +80,9 @@ public class Utils {
         }
         if (minutes > 0) {
             result.add(String.format(Locale.getDefault(), "%dm", minutes));
+        }
+        if (seconds > 0) {
+            result.add(String.format(Locale.getDefault(), "%ds", seconds));
         }
         if (result.size() == 0) {
             return "<1m";
