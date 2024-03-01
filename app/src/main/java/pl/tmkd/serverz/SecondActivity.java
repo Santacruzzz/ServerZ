@@ -4,6 +4,7 @@ import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -88,13 +89,16 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     @SuppressLint("SetTextI18n")
     public void updateServerInfo() {
         TextView name = findViewById(R.id.serverName);
+        TextView serverAddress = findViewById(R.id.serverAddress);
         TextView amountOfPlayers = findViewById(R.id.amountOfPlayers);
         TextView serverTime = findViewById(R.id.serverTime);
         TextView dayDuration = findViewById(R.id.dayDuration);
         TextView nightDuration = findViewById(R.id.nightDuration);
         TextView durationTillSunriseOrSunset = findViewById(R.id.durationTillSunriseOrSunset);
+        TextView progress = findViewById(R.id.progress);
 
         name.setText(server.getName());
+        serverAddress.setText(server.getAddress());
         amountOfPlayers.setText((server.getPlayersNum()) + "/" + (server.getMaxPlayers()));
         serverTime.setText(server.getServerTime());
         dayDuration.setText(server.getDayDuration());
@@ -102,6 +106,17 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         durationTillSunriseOrSunset.setText(server.getDurationTillSunriseOrSunset());
         progressBar.setIndeterminate(false);
         progressBar.setProgress(server.getDayOrNightProgress());
+        setProgressColor(progress);
+    }
+
+    public void setProgressColor(TextView progress) {
+        if (server.getDayOrNightProgress() < 50) {
+            progress.setText(server.getDayOrNightProgress() + "%");
+            progress.setTextColor(Color.WHITE);
+        } else {
+            progress.setText(server.getDayOrNightProgress() + "%");
+            progress.setTextColor(Color.BLACK);
+        }
     }
 
     @Override
@@ -126,7 +141,6 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     protected void onResume() {
         super.onResume();
         server.start();
-
     }
 
     @Override

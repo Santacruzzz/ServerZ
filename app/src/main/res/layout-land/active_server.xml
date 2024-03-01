@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1.5">
         <TextView
             android:text="Server name"
             android:id="@+id/serverName"
@@ -24,6 +24,16 @@
             android:textColor="#F4F5F9"
             android:textSize="20sp"
             tools:ignore="NestedWeights" />
+
+        <TextView
+            android:text="Server address"
+            android:id="@+id/serverAddress"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/server_item_detail_item_color"
+            android:textSize="20sp" />
 
         <TableRow
             android:id="@+id/hr"
@@ -37,6 +47,7 @@
             android:stretchColumns="*"
             android:layout_height="0dp"
             android:layout_weight="4"
+            android:layout_margin="20dp"
             android:layout_width="match_parent"
             tools:ignore="NestedWeights">
 
@@ -58,7 +69,7 @@
                         android:layout_height="match_parent"
                         android:gravity="start|center"
                         android:textColor="#FEFEFE"
-                        android:textSize="20sp"
+                        android:textSize="25sp"
                         android:drawablePadding="15dp"
                         android:drawableLeft="@drawable/baseline_person_24"/>
 
@@ -69,7 +80,7 @@
                         android:layout_height="match_parent"
                         android:gravity="start|center"
                         android:textColor="#FEFEFE"
-                        android:textSize="20sp"
+                        android:textSize="25sp"
                         android:drawablePadding="15dp"
                         android:drawableLeft="@drawable/baseline_sunny_24"/>
 
@@ -80,7 +91,7 @@
                         android:layout_height="match_parent"
                         android:gravity="start|center"
                         android:textColor="#FEFEFE"
-                        android:textSize="20sp"
+                        android:textSize="25sp"
                         android:drawablePadding="15dp"
                         android:drawableLeft="@drawable/baseline_nightlight_24"/>
 
@@ -94,11 +105,10 @@
                     <TextView
                         android:text="00"
                         android:id="@+id/serverTime"
-                        android:layout_weight="3"
+                        android:layout_weight="2"
                         android:gravity="end|center"
-                        android:paddingRight="30dp"
                         android:textColor="#FEFEFE"
-                        android:textSize="40sp" />
+                        android:textSize="50sp" />
 
                     <TextView
                         android:text="00"
@@ -106,9 +116,8 @@
                         android:layout_weight="1"
                         android:gravity="end|center"
                         android:textColor="#FEFEFE"
-                        android:textSize="20sp"
+                        android:textSize="25sp"
                         android:drawablePadding="15dp"
-                        android:paddingRight="15dp"
                         android:drawableRight="@drawable/baseline_nightlight_24" />
 
                 </TableLayout>
@@ -117,12 +126,25 @@
 
         </TableLayout>
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressBar"
-            app:trackThickness="20dp"
-            android:indeterminate="true"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressBar"
+                app:trackThickness="20dp"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_width="match_parent" />
+
+            <TextView
+                android:id="@+id/progress"
+                android:text="0%"
+                android:background="#00000000"
+                android:gravity="center"
+                android:layout_height="20dp"
+                android:layout_width="match_parent"/>
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -160,7 +182,7 @@
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp"
+                android:layout_margin="20dp"
                 tools:ignore="MissingClass" />
 
     </LinearLayout>

@@ -19,10 +19,32 @@
         android:textColor="#F4F5F9"
         android:textSize="20sp" />
 
+    <TextView
+        android:text="Server address"
+        android:id="@+id/serverAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/serverName"
+        android:paddingBottom="10dp"
+        android:paddingTop="5dp"
+        android:gravity="center"
+        android:textColor="@color/server_item_detail_item_color"
+        android:textSize="20sp" />
+
+    <TableRow
+        android:id="@+id/hr"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/serverAddress"
+        android:background="#444">
+    </TableRow>
+
     <TableLayout
         android:id="@+id/tableLayout"
         android:stretchColumns="*"
-        android:layout_below="@id/serverName"
+        android:layout_margin="20dp"
+
+        android:layout_below="@id/serverAddress"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
 
@@ -86,9 +108,8 @@
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
                     android:gravity="end"
-                    android:paddingRight="30dp"
                     android:textColor="#FEFEFE"
-                    android:textSize="40sp" />
+                    android:textSize="50sp" />
 
                 <TextView
                     android:text="00"
@@ -99,7 +120,6 @@
                     android:gravity="end"
                     android:textColor="#FEFEFE"
                     android:textSize="25sp"
-                    android:paddingRight="25dp"
                     android:drawablePadding="15dp"
                     android:drawableRight="@drawable/baseline_nightlight_24" />
 
@@ -111,10 +131,22 @@
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressBar"
-        app:trackThickness="10dp"
+        app:trackThickness="20dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/tableLayout"
         android:indeterminate="true"
+        android:layout_width="match_parent" />
+
+    <TextView
+        android:id="@+id/progress"
+        android:text="0%"
+        android:background="#00000000"
+        android:layout_alignLeft="@id/progressBar"
+        android:layout_alignTop="@id/progressBar"
+        android:layout_alignRight="@id/progressBar"
+        android:layout_alignBottom="@id/progressBar"
+        android:gravity="center"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"/>
 
     <com.google.android.material.tabs.TabLayout
@@ -143,8 +175,11 @@
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
         android:layout_below="@id/tab_layout"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         tools:ignore="MissingClass" />
 
 </RelativeLayout>
