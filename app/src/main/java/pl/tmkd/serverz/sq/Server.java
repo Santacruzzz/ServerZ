@@ -53,6 +53,7 @@ public class Server implements SqResponseListener, Runnable{
     private final int refreshTimer;
     private long ingameMinutesToSunriseOrSunset;
     private ArrayList<Mod> mods;
+    private int retries;
 
     public Server(String ip, int port, RefreshType refreshType) {
         this.ip = ip;
@@ -68,6 +69,7 @@ public class Server implements SqResponseListener, Runnable{
         refreshTimer = refreshType.equals(RefreshType.FULL) ? TIMER_QUERY_RETRY_FAST : TIMER_QUERY_RETRY_SLOW;
         serverTime = LocalTime.parse("00:00");
         name = getAddress();
+        retries = 0;
     }
 
     @Override
@@ -96,6 +98,7 @@ public class Server implements SqResponseListener, Runnable{
         started = false;
         Log.d(TAG_SERVER, getAddress() + " :: Removing callbacks (has one? " + refreshHandler.hasCallbacks(this) + ")");
         refreshHandler.removeCallbacks(this);
+        resetRetries();
     }
 
     public void setListener(ServerListener listener) {
@@ -106,9 +109,21 @@ public class Server implements SqResponseListener, Runnable{
         executor.execute(refreshServerDataTask);
     }
 
+    private void resetRetries() {
+        retries = 0;
+    }
+
+    private void incrementRetry() throws Exception {
+        retries ++;
+        if (retries >= 4) {
+            throw new Exception("Max retries limit reached");
+        }
+    }
+
     @Override
     public void onServerInfoResponse(ServerInfoResponse infoResponse, ServerPlayersResponse playersResponse, ServerRulesResponse rulesResponse) {
         Log.d(TAG_SERVER, getAddress() + " :: onServerInfoResponse: " + infoResponse + ", " + playersResponse + ", " + rulesResponse);
+        resetRetries();
         store(infoResponse);
         if (null != playersResponse)
             store(playersResponse);
@@ -116,17 +131,28 @@ public class Server implements SqResponseListener, Runnable{
             store(rulesResponse);
         refreshHandler.postDelayed(this, refreshTimer);
 
-        if (null != listener)
+        if (null != listener) {
             listener.onServerInfoRefreshed();
+        }
     }
 
     @Override
     public void onServerRefreshFailed() {
-        Log.w(TAG_SERVER, getAddress() + " :: onServerRefreshFailed");
         refreshFailed = true;
-        stop();
-        if (null != listener)
-            listener.onServerInfoRefreshFailed(this);
+        try {
+            if (started) {
+                incrementRetry();
+                Log.w(TAG_SERVER, getAddress() + " :: onServerRefreshFailed, retrying #:" + retries);
+                refreshHandler.postDelayed(this, 0);
+            }
+        } catch (Exception e) {
+            if (null != listener) {
+                listener.onServerInfoRefreshFailed(this);
+            }
+            resetRetries();
+            Log.w(TAG_SERVER, getAddress() + " :: onServerRefreshFailed, msg: " + e.getMessage() + ", retrying in: " + TIMER_QUERY_RETRY_FAST + "ms");
+            refreshHandler.postDelayed(this, TIMER_QUERY_RETRY_FAST);
+        }
     }
 
     @Override

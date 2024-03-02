@@ -70,7 +70,7 @@ public class SourceQueryTask implements Runnable {
                 listener.onServerInfoResponse(infoResp, playerResp, rulesResponse);
         } catch (Exception e) {
             listener.onServerRefreshFailed();
-            Log.e(TAG_SQ, "Task failed, msg: " + e.getMessage());
+            Log.e(TAG_SQ, address + " :: Task failed, msg: " + e.getMessage());
         }
     }
 
