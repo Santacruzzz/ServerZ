@@ -84,11 +84,12 @@ public class Utils {
         if (seconds > 0) {
             result.add(String.format(Locale.getDefault(), "%ds", seconds));
         }
-        if (result.size() == 0) {
-            return "<1m";
-        }
-
         return String.join(" ", result);
+    }
+
+    public static String formatDayDuration(Duration duration) {
+        String formattedDuration = formatDuration(duration);
+        return formattedDuration.length() == 0 ? "<1m" : formattedDuration;
     }
 
     public static boolean isServerInList(ArrayList<Server> servers, Server server) {
@@ -128,5 +129,13 @@ public class Utils {
             result = (result << 8) | (byteArray[i] & 0xFF);
         }
         return result;
+    }
+
+    public static String payloadToString(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+        for (byte item: bytes) {
+            builder.append(String.format("%02x", item));
+        }
+        return builder.toString();
     }
 }

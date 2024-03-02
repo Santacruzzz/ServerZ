@@ -5,6 +5,7 @@ import static pl.tmkd.serverz.sq.Constants.SUNSET_TIME;
 import static pl.tmkd.serverz.sq.Constants.TAG_SERVER;
 import static pl.tmkd.serverz.sq.Constants.TIMER_QUERY_RETRY_FAST;
 import static pl.tmkd.serverz.sq.Constants.TIMER_QUERY_RETRY_SLOW;
+import static pl.tmkd.serverz.sq.msg.Utils.formatDayDuration;
 import static pl.tmkd.serverz.sq.msg.Utils.formatDuration;
 
 import android.os.Handler;
@@ -204,23 +205,22 @@ public class Server implements SqResponseListener, Runnable{
         calculateMinutesTillSunsetOrSunrise();
 
         Log.d(TAG_SERVER, getAddress() + " :: Server time: " + serverTime
-                + ", in game till day/night: " + formatDuration(Duration.ofMinutes(ingameMinutesToSunriseOrSunset))
+                + ", in game till day/night: " + formatDayDuration(Duration.ofMinutes(ingameMinutesToSunriseOrSunset))
                 + ", real: " + tillSunsetOrSunrise + " (" + getDayOrNightProgress() + "%)");
     }
 
     private void calculateMinutesTillSunsetOrSunrise() {
-        ingameMinutesToSunriseOrSunset = ChronoUnit.MINUTES.between(serverTime, SUNSET_TIME);
-        tillSunsetOrSunrise = formatDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / dayTimeMult)));
-        if (!isDaytime()) {
-            ingameMinutesToSunriseOrSunset = 0;
-            LocalTime oneSecondToMidnight = LocalTime.MIDNIGHT.minus(Duration.ofSeconds(1));
-            if (serverTime.isBefore(oneSecondToMidnight)) {
-                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, oneSecondToMidnight);
+        if (isDaytime()) {
+            ingameMinutesToSunriseOrSunset = ChronoUnit.MINUTES.between(serverTime, SUNSET_TIME);
+            tillSunsetOrSunrise = formatDayDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / dayTimeMult)));
+        } else {
+            if (serverTime.isAfter(SUNSET_TIME)) {
+                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, LocalTime.MIDNIGHT.minus(Duration.ofSeconds(1)));
                 ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(LocalTime.MIDNIGHT, SUNRISE_TIME);
             } else {
                 ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, SUNRISE_TIME);
             }
-            tillSunsetOrSunrise = formatDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / (dayTimeMult * nightTimeMult))));
+            tillSunsetOrSunrise = formatDayDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / (dayTimeMult * nightTimeMult))));
         }
     }
 
@@ -232,8 +232,8 @@ public class Server implements SqResponseListener, Runnable{
         long daytimeMinutes = ChronoUnit.MINUTES.between(SUNRISE_TIME, SUNSET_TIME);
         long nighttimeMinutes = 24 * 60 - daytimeMinutes;
 
-        dayDuration = formatDuration(Duration.ofMinutes((long) (daytimeMinutes / dayTimeMult)));
-        nightDuration = formatDuration(Duration.ofMinutes((long) (nighttimeMinutes / (dayTimeMult * nightTimeMult))));
+        dayDuration = formatDayDuration(Duration.ofMinutes((long) (daytimeMinutes / dayTimeMult)));
+        nightDuration = formatDayDuration(Duration.ofMinutes((long) (nighttimeMinutes / (dayTimeMult * nightTimeMult))));
     }
 
     public boolean isDaytime() {
