@@ -210,10 +210,13 @@ public class Server implements SqResponseListener, Runnable{
     }
 
     private void calculateMinutesTillSunsetOrSunrise() {
+        ingameMinutesToSunriseOrSunset = 0;
         if (isDaytime()) {
+            Log.d(TAG_SERVER, "is daytime");
             ingameMinutesToSunriseOrSunset = ChronoUnit.MINUTES.between(serverTime, SUNSET_TIME);
             tillSunsetOrSunrise = formatDayDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / dayTimeMult)));
         } else {
+            Log.d(TAG_SERVER, "is nighttime");
             if (serverTime.isAfter(SUNSET_TIME)) {
                 ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, LocalTime.MIDNIGHT.minus(Duration.ofSeconds(1)));
                 ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(LocalTime.MIDNIGHT, SUNRISE_TIME);
