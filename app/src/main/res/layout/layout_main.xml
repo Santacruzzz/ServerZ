@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="#0D1423">
 
@@ -19,6 +21,26 @@
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_add_24"
         android:layout_margin="25dp"
-        android:contentDescription="TODO" />
+        android:contentDescription="TODO"
+        app:borderWidth="0dp"
+        android:visibility="visible"/>
+
+    <FrameLayout
+        android:id="@+id/emptyServers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/extendedButton"
+            android:backgroundTint="@color/purple_200"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:text="Add server"
+            android:drawableEnd="@drawable/baseline_add_24"/>
+
+    </FrameLayout>
 
 </FrameLayout>

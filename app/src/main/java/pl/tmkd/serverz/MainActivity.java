@@ -18,12 +18,14 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
@@ -38,7 +40,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private ListView serversView;
     private ServersAdapter serversAdapter;
     private ArrayList<Server> servers;
-    private  File file;
+    private File file;
+    private FrameLayout emptyServers;
 
 
     @Override
@@ -49,13 +52,30 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         file = new File(this.getFileStreamPath("servers.txt").toURI());
         servers = new ArrayList<>();
         serversAdapter = new ServersAdapter(this, servers);
-        FloatingActionButton addServerButton = (FloatingActionButton) findViewById(R.id.floatingButton);
         serversView = findViewById(R.id.idServersView);
+        emptyServers = findViewById(R.id.emptyServers);
         serversView.setOnItemClickListener(this);
-        addServerButton.setOnClickListener(this::onNewServerButtonClick);
         serversView.setAdapter(serversAdapter);
         registerForContextMenu(serversView);
         loadServers();
+        changeLayoutVisibility();
+    }
+
+    public void changeLayoutVisibility() {
+        FloatingActionButton addServerButton = (FloatingActionButton) findViewById(R.id.floatingButton);
+        ExtendedFloatingActionButton addFirstServerButton = (ExtendedFloatingActionButton) findViewById(R.id.extendedButton);
+
+        if (servers.isEmpty()) {
+            emptyServers.setVisibility(View.VISIBLE);
+            serversView.setVisibility(View.GONE);
+            addServerButton.setVisibility(View.GONE);
+            addFirstServerButton.setOnClickListener(this::onNewServerButtonClick);
+        } else {
+            serversView.setVisibility(View.VISIBLE);
+            emptyServers.setVisibility(View.GONE);
+            addServerButton.setVisibility(View.VISIBLE);
+            addServerButton.setOnClickListener(this::onNewServerButtonClick);
+        }
     }
 
     @Override
@@ -117,6 +137,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             servers.remove(server);
             serversAdapter.notifyDataSetChanged();
             dialog.dismiss();
+            changeLayoutVisibility();
         });
 
         noButton.setOnClickListener(v -> dialog.dismiss());
@@ -200,6 +221,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         server.start();
         servers.add(server);
         serversAdapter.notifyDataSetChanged();
+        changeLayoutVisibility();
     }
 
     public void editServerAddress(Server server, String ip, int port) {
