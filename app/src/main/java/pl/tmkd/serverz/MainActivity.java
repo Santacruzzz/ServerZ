@@ -93,6 +93,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         intent.putExtra("nightDuration", server.getNightDuration());
         intent.putExtra("durationTillSunriseOrSunset", server.getDurationTillSunriseOrSunset());
         intent.putExtra("isDay", server.isDaytime());
+        intent.putExtra("dayOrNightProgress", server.getDayOrNightProgress());
+        intent.putExtra("hasRefreshSucceeded", server.hasRefreshSucceeded());
         startActivity(intent);
     }
 

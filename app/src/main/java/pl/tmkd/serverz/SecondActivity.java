@@ -27,8 +27,6 @@ import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerListener;
 
 public class SecondActivity extends AppCompatActivity implements ServerListener, Serializable {
-    private View view;
-    private TextView textView;
     private LinearProgressIndicator progressBar;
     Server server;
     public TabLayout tabLayout;
@@ -43,9 +41,9 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         View view = getLayoutInflater().inflate(R.layout.active_server, null);
         setContentView(view);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        progressBar = findViewById(R.id.progressBar);
         readServerDataFromIntent();
 
-        progressBar = findViewById(R.id.progressBar);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
 
         if (null == playerFragment) {
@@ -88,13 +86,18 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         String nightDuration = intent.getStringExtra("nightDuration");
         String durationTillSunriseOrSunset = intent.getStringExtra("durationTillSunriseOrSunset");
         Boolean isDayTime = intent.getBooleanExtra("isDay", true);
+        int dayOrNightProgress = intent.getIntExtra("dayOrNightProgress", 0);
+        boolean hasRefreshSucceeded = intent.getBooleanExtra("hasRefreshSucceeded", false);
 
         server = new Server(ip, port, RefreshType.FULL);
-        showServerData(serverName, address, numberOfPlayers, maxPlayers, serverTime, dayDuration, nightDuration, durationTillSunriseOrSunset, isDayTime);
+        showServerData(serverName, address, numberOfPlayers, maxPlayers, serverTime, dayDuration, nightDuration,
+                durationTillSunriseOrSunset, isDayTime, dayOrNightProgress, hasRefreshSucceeded);
         server.setListener(this);
     }
 
-    public void showServerData(String serverName, String address, int numberOfPlayers, int maxPlayers, String sTime, String dDuration, String nDuration, String dSunriseOrSunset, Boolean isDayTime) {
+    public void showServerData(String serverName, String address, int numberOfPlayers, int maxPlayers,
+                               String sTime, String dDuration, String nDuration, String dSunriseOrSunset,
+                               Boolean isDayTime, int dayOrNightProgress, boolean hasRefreshSucceeded) {
         TextView name = findViewById(R.id.serverName);
         TextView serverAddress = findViewById(R.id.serverAddress);
         TextView amountOfPlayers = findViewById(R.id.amountOfPlayers);
@@ -102,6 +105,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         TextView dayDuration = findViewById(R.id.dayDuration);
         TextView nightDuration = findViewById(R.id.nightDuration);
         TextView durationTillSunriseOrSunset = findViewById(R.id.durationTillSunriseOrSunset);
+        TextView progress = findViewById(R.id.progress);
 
         name.setText(serverName);
         serverAddress.setText(address);
@@ -111,6 +115,11 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         nightDuration.setText(nDuration);
         durationTillSunriseOrSunset.setText(dSunriseOrSunset + " till");
         changeIconWhenIsDayOrNightTime(isDayTime, durationTillSunriseOrSunset);
+        progressBar.setProgress(dayOrNightProgress);
+        setProgressColor(progress, dayOrNightProgress);
+        if (hasRefreshSucceeded) {
+            progressBar.setIndeterminate(false);
+        }
     }
 
     public void updateIntentData() {
@@ -126,6 +135,8 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         intent.putExtra("nightDuration", server.getNightDuration());
         intent.putExtra("durationTillSunriseOrSunset", server.getDurationTillSunriseOrSunset());
         intent.putExtra("isDay", server.isDaytime());
+        intent.putExtra("dayOrNightProgress", server.getDayOrNightProgress());
+        intent.putExtra("hasRefreshSucceeded", server.hasRefreshSucceeded());
     }
 
     public void updatePlayersFragment(PlayerFragment newPlayersFragment) {
@@ -137,21 +148,18 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     }
 
     public void updateServerData() {
-        TextView progress = findViewById(R.id.progress);
-
-        showServerData(server.getName(), server.getAddress(), server.getPlayersNum(), server.getMaxPlayers(), server.getServerTime(), server.getDayDuration(), server.getNightDuration(), server.getDurationTillSunriseOrSunset(), server.isDaytime());
-
+        showServerData(server.getName(), server.getAddress(), server.getPlayersNum(), server.getMaxPlayers(),
+                server.getServerTime(), server.getDayDuration(), server.getNightDuration(),
+                server.getDurationTillSunriseOrSunset(), server.isDaytime(), server.getDayOrNightProgress(), server.hasRefreshSucceeded());
         progressBar.setIndeterminate(false);
-        progressBar.setProgress(server.getDayOrNightProgress());
-        setProgressColor(progress);
     }
 
-    public void setProgressColor(TextView progress) {
-        if (server.getDayOrNightProgress() < 50) {
-            progress.setText(server.getDayOrNightProgress() + "%");
+    public void setProgressColor(TextView progress, int dayOrNightProgress) {
+        if (dayOrNightProgress < 50) {
+            progress.setText(dayOrNightProgress + "%");
             progress.setTextColor(Color.WHITE);
         } else {
-            progress.setText(server.getDayOrNightProgress() + "%");
+            progress.setText(dayOrNightProgress + "%");
             progress.setTextColor(Color.BLACK);
         }
     }
