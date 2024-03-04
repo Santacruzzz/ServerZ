@@ -84,6 +84,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
         intent.putExtra("ip", server.getIp());
         intent.putExtra("port", server.getPort());
+        intent.putExtra("name", server.getName());
+        intent.putExtra("address", server.getAddress());
+        intent.putExtra("amountOfPlayers", server.getPlayersNum());
+        intent.putExtra("maxPlayersNum", server.getMaxPlayers());
+        intent.putExtra("serverTime", server.getServerTime());
+        intent.putExtra("dayDuration", server.getDayDuration());
+        intent.putExtra("nightDuration", server.getNightDuration());
+        intent.putExtra("durationTillSunriseOrSunset", server.getDurationTillSunriseOrSunset());
+        intent.putExtra("isDay", server.isDaytime());
         startActivity(intent);
     }
 

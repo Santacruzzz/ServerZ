@@ -2,7 +2,6 @@ package pl.tmkd.serverz;
 
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -44,12 +43,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         View view = getLayoutInflater().inflate(R.layout.active_server, null);
         setContentView(view);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        Intent intent = getIntent();
-        String ip = intent.getStringExtra("ip");
-        int port = intent.getIntExtra("port", 0);
-        server = new Server(ip, port, RefreshType.FULL);
-        server.setListener(this);
+        readServerDataFromIntent();
 
         progressBar = findViewById(R.id.progressBar);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
@@ -81,6 +75,59 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         }).attach();
     }
 
+    public void readServerDataFromIntent() {
+        Intent intent = getIntent();
+        String ip = intent.getStringExtra("ip");
+        int port = intent.getIntExtra("port", 0);
+        String serverName = intent.getStringExtra("name");
+        String address = intent.getStringExtra("address");
+        int numberOfPlayers = intent.getIntExtra("amountOfPlayers", 0);
+        int maxPlayers = intent.getIntExtra("maxPlayersNum", 0);
+        String serverTime = intent.getStringExtra("serverTime");
+        String dayDuration = intent.getStringExtra("dayDuration");
+        String nightDuration = intent.getStringExtra("nightDuration");
+        String durationTillSunriseOrSunset = intent.getStringExtra("durationTillSunriseOrSunset");
+        Boolean isDayTime = intent.getBooleanExtra("isDay", true);
+
+        server = new Server(ip, port, RefreshType.FULL);
+        showServerData(serverName, address, numberOfPlayers, maxPlayers, serverTime, dayDuration, nightDuration, durationTillSunriseOrSunset, isDayTime);
+        server.setListener(this);
+    }
+
+    public void showServerData(String serverName, String address, int numberOfPlayers, int maxPlayers, String sTime, String dDuration, String nDuration, String dSunriseOrSunset, Boolean isDayTime) {
+        TextView name = findViewById(R.id.serverName);
+        TextView serverAddress = findViewById(R.id.serverAddress);
+        TextView amountOfPlayers = findViewById(R.id.amountOfPlayers);
+        TextView serverTime = findViewById(R.id.serverTime);
+        TextView dayDuration = findViewById(R.id.dayDuration);
+        TextView nightDuration = findViewById(R.id.nightDuration);
+        TextView durationTillSunriseOrSunset = findViewById(R.id.durationTillSunriseOrSunset);
+
+        name.setText(serverName);
+        serverAddress.setText(address);
+        amountOfPlayers.setText(numberOfPlayers + "/" + maxPlayers);
+        serverTime.setText(sTime);
+        dayDuration.setText(dDuration);
+        nightDuration.setText(nDuration);
+        durationTillSunriseOrSunset.setText(dSunriseOrSunset + " till");
+        changeIconWhenIsDayOrNightTime(isDayTime, durationTillSunriseOrSunset);
+    }
+
+    public void updateIntentData() {
+        Intent intent = getIntent();
+        intent.putExtra("ip", server.getIp());
+        intent.putExtra("port", server.getPort());
+        intent.putExtra("name", server.getName());
+        intent.putExtra("address", server.getAddress());
+        intent.putExtra("amountOfPlayers", server.getPlayersNum());
+        intent.putExtra("maxPlayersNum", server.getMaxPlayers());
+        intent.putExtra("serverTime", server.getServerTime());
+        intent.putExtra("dayDuration", server.getDayDuration());
+        intent.putExtra("nightDuration", server.getNightDuration());
+        intent.putExtra("durationTillSunriseOrSunset", server.getDurationTillSunriseOrSunset());
+        intent.putExtra("isDay", server.isDaytime());
+    }
+
     public void updatePlayersFragment(PlayerFragment newPlayersFragment) {
         this.playerFragment = newPlayersFragment;
     }
@@ -89,28 +136,14 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         this.modFragment = newModFragment;
     }
 
-    @SuppressLint("SetTextI18n")
-    public void updateServerInfo() {
-        TextView name = findViewById(R.id.serverName);
-        TextView serverAddress = findViewById(R.id.serverAddress);
-        TextView amountOfPlayers = findViewById(R.id.amountOfPlayers);
-        TextView serverTime = findViewById(R.id.serverTime);
-        TextView dayDuration = findViewById(R.id.dayDuration);
-        TextView nightDuration = findViewById(R.id.nightDuration);
-        TextView durationTillSunriseOrSunset = findViewById(R.id.durationTillSunriseOrSunset);
+    public void updateServerData() {
         TextView progress = findViewById(R.id.progress);
 
-        name.setText(server.getName());
-        serverAddress.setText(server.getAddress());
-        amountOfPlayers.setText((server.getPlayersNum()) + "/" + (server.getMaxPlayers()));
-        serverTime.setText(server.getServerTime());
-        dayDuration.setText(server.getDayDuration());
-        nightDuration.setText(server.getNightDuration());
-        durationTillSunriseOrSunset.setText(server.getDurationTillSunriseOrSunset() + " till");
+        showServerData(server.getName(), server.getAddress(), server.getPlayersNum(), server.getMaxPlayers(), server.getServerTime(), server.getDayDuration(), server.getNightDuration(), server.getDurationTillSunriseOrSunset(), server.isDaytime());
+
         progressBar.setIndeterminate(false);
         progressBar.setProgress(server.getDayOrNightProgress());
         setProgressColor(progress);
-        changeIconWhenIsDayOrNightTime(durationTillSunriseOrSunset);
     }
 
     public void setProgressColor(TextView progress) {
@@ -123,11 +156,11 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         }
     }
 
-    public void changeIconWhenIsDayOrNightTime(TextView durationTillSunriseOrSunset) {
+    public void changeIconWhenIsDayOrNightTime(Boolean isDayTime, TextView durationTillSunriseOrSunset) {
         Resources res = getResources();
         Drawable iconNight = ResourcesCompat.getDrawable(res, R.drawable.baseline_nightlight_24, null);
         Drawable iconDay = ResourcesCompat.getDrawable(res, R.drawable.baseline_sunny_24, null);
-        if (server.isDaytime()) {
+        if (isDayTime) {
             durationTillSunriseOrSunset.setCompoundDrawablesWithIntrinsicBounds(null, null, iconNight, null);
         } else {
             durationTillSunriseOrSunset.setCompoundDrawablesWithIntrinsicBounds(null, null, iconDay,null);
@@ -137,7 +170,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     @Override
     public void onServerInfoRefreshed() {
         runOnUiThread(() -> {
-            updateServerInfo();
+            updateServerData();
             playerFragment.update();
             modFragment.update();
         });
@@ -160,6 +193,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     @Override
     protected void onPause() {
         super.onPause();
+        updateIntentData();
         server.stop();
     }
 }
