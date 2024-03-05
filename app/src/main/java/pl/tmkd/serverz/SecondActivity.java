@@ -36,17 +36,27 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     PlayerFragment playerFragment;
     ModFragment modFragment;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = getLayoutInflater().inflate(R.layout.active_server, null);
-        setContentView(view);
+        View activeServerView = getLayoutInflater().inflate(R.layout.active_server, null);
+        setContentView(activeServerView);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         progressBar = findViewById(R.id.progressBar);
         readServerDataFromIntent();
-
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
+        initFragments();
+        viewPagerAdapter.add(playerFragment, "Players");
+        viewPagerAdapter.add(modFragment, "Modes");
+        myViewPager2 = findViewById(R.id.viewpager);
+        myViewPager2.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
+        myViewPager2.setAdapter(viewPagerAdapter);
+        tabLayout = findViewById(R.id.tab_layout);
+        initTabLayout();
+    }
 
+    public void initFragments() {
         if (null == playerFragment) {
             playerFragment = new PlayerFragment(getBaseContext(), server.getPlayers());
         } else {
@@ -57,14 +67,9 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         } else {
             modFragment.setMods(server.getMods());
         }
+    }
 
-        viewPagerAdapter.add(playerFragment, "Players");
-        viewPagerAdapter.add(modFragment, "Modes");
-        myViewPager2 = findViewById(R.id.viewpager);
-        myViewPager2.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
-        myViewPager2.setAdapter(viewPagerAdapter);
-
-        tabLayout = findViewById(R.id.tab_layout);
+    public void initTabLayout() {
         new TabLayoutMediator(tabLayout, myViewPager2, (tab, position) -> {
             if (position == 0) {
                 tab.setText("PLAYERS");
@@ -117,7 +122,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         durationTillSunriseOrSunset.setText(dSunriseOrSunset + " till");
         changeIconWhenIsDayOrNightTime(isDayTime, durationTillSunriseOrSunset);
         progressBar.setProgress(dayOrNightProgress);
-        setProgressColor(progress, dayOrNightProgress);
+        setProgressTextColor(progress, dayOrNightProgress);
         if (hasRefreshSucceeded) {
             progressBar.setIndeterminate(false);
         }
@@ -143,7 +148,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         progressBar.setIndeterminate(false);
     }
 
-    public void setProgressColor(TextView progress, int dayOrNightProgress) {
+    public void setProgressTextColor(TextView progress, int dayOrNightProgress) {
         if (dayOrNightProgress < 50) {
             progress.setText(dayOrNightProgress + "%");
             progress.setTextColor(Color.WHITE);
