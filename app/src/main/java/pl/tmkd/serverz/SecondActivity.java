@@ -36,7 +36,6 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
     PlayerFragment playerFragment;
     ModFragment modFragment;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,10 +120,10 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         nightDuration.setText(nDuration);
         durationTillSunriseOrSunset.setText(dSunriseOrSunset + " till");
         changeIconWhenIsDayOrNightTime(isDayTime, durationTillSunriseOrSunset);
-        progressBar.setProgress(dayOrNightProgress);
-        setProgressTextColor(progress, dayOrNightProgress);
         if (hasRefreshSucceeded) {
             progressBar.setIndeterminate(false);
+            progressBar.setProgress(dayOrNightProgress);
+            setProgressTextAndColor(progress, dayOrNightProgress);
         }
     }
 
@@ -148,7 +147,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         progressBar.setIndeterminate(false);
     }
 
-    public void setProgressTextColor(TextView progress, int dayOrNightProgress) {
+    public void setProgressTextAndColor(TextView progress, int dayOrNightProgress) {
         if (dayOrNightProgress < 50) {
             progress.setText(dayOrNightProgress + "%");
             progress.setTextColor(Color.WHITE);
