@@ -4,6 +4,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
 import static pl.tmkd.serverz.sq.msg.Utils.isIpAndPortInList;
 import static pl.tmkd.serverz.sq.msg.Utils.isServerInList;
+import static pl.tmkd.serverz.sq.msg.Utils.saveServerDataInIntent;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -83,19 +84,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Server server = servers.get(position);
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-        intent.putExtra("ip", server.getIp());
-        intent.putExtra("port", server.getPort());
-        intent.putExtra("name", server.getName());
-        intent.putExtra("address", server.getAddress());
-        intent.putExtra("amountOfPlayers", server.getPlayersNum());
-        intent.putExtra("maxPlayersNum", server.getMaxPlayers());
-        intent.putExtra("serverTime", server.getServerTime());
-        intent.putExtra("dayDuration", server.getDayDuration());
-        intent.putExtra("nightDuration", server.getNightDuration());
-        intent.putExtra("durationTillSunriseOrSunset", server.getDurationTillSunriseOrSunset());
-        intent.putExtra("isDay", server.isDaytime());
-        intent.putExtra("dayOrNightProgress", server.getDayOrNightProgress());
-        intent.putExtra("hasRefreshSucceeded", server.hasRefreshSucceeded());
+        saveServerDataInIntent(server, intent);
         startActivity(intent);
     }
 

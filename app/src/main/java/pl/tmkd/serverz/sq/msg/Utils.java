@@ -1,5 +1,7 @@
 package pl.tmkd.serverz.sq.msg;
 
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
 
 import java.nio.ByteBuffer;
@@ -137,5 +139,21 @@ public class Utils {
             builder.append(String.format("%02x", item));
         }
         return builder.toString();
+    }
+
+    public static void saveServerDataInIntent(Server server, Intent intent) {
+        intent.putExtra("ip", server.getIp());
+        intent.putExtra("port", server.getPort());
+        intent.putExtra("name", server.getName());
+        intent.putExtra("address", server.getAddress());
+        intent.putExtra("amountOfPlayers", server.getPlayersNum());
+        intent.putExtra("maxPlayersNum", server.getMaxPlayers());
+        intent.putExtra("serverTime", server.getServerTime());
+        intent.putExtra("dayDuration", server.getDayDuration());
+        intent.putExtra("nightDuration", server.getNightDuration());
+        intent.putExtra("durationTillSunriseOrSunset", server.getDurationTillSunriseOrSunset());
+        intent.putExtra("isDay", server.isDaytime());
+        intent.putExtra("dayOrNightProgress", server.getDayOrNightProgress());
+        intent.putExtra("hasRefreshSucceeded", server.hasRefreshSucceeded());
     }
 }

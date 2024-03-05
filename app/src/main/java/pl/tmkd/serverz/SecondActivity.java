@@ -1,6 +1,7 @@
 package pl.tmkd.serverz;
 
 import static pl.tmkd.serverz.sq.Constants.TAG_MAIN;
+import static pl.tmkd.serverz.sq.msg.Utils.saveServerDataInIntent;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -124,19 +125,7 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
 
     public void updateIntentData() {
         Intent intent = getIntent();
-        intent.putExtra("ip", server.getIp());
-        intent.putExtra("port", server.getPort());
-        intent.putExtra("name", server.getName());
-        intent.putExtra("address", server.getAddress());
-        intent.putExtra("amountOfPlayers", server.getPlayersNum());
-        intent.putExtra("maxPlayersNum", server.getMaxPlayers());
-        intent.putExtra("serverTime", server.getServerTime());
-        intent.putExtra("dayDuration", server.getDayDuration());
-        intent.putExtra("nightDuration", server.getNightDuration());
-        intent.putExtra("durationTillSunriseOrSunset", server.getDurationTillSunriseOrSunset());
-        intent.putExtra("isDay", server.isDaytime());
-        intent.putExtra("dayOrNightProgress", server.getDayOrNightProgress());
-        intent.putExtra("hasRefreshSucceeded", server.hasRefreshSucceeded());
+        saveServerDataInIntent(server, intent);
     }
 
     public void updatePlayersFragment(PlayerFragment newPlayersFragment) {
