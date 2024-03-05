@@ -23,6 +23,7 @@
             android:layout_height="match_parent"
             android:text="@string/do_you_really_want_to_remove_the_server"
             android:textColor="@color/white"
+            android:textAlignment="center"
             android:autofillHints=""
             android:textSize="20dp" />
 
@@ -41,7 +42,7 @@
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:text="Yes"
-            android:background="@color/purple_700"
+            android:backgroundTint="@color/purple_700"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -53,7 +54,7 @@
             android:layout_toRightOf="@id/yesButton"
             android:textAllCaps="false"
             android:text="No"
-            android:background="@color/purple_700"
+            android:backgroundTint="@color/purple_700"
             android:textColor="@color/purple_200"
             android:textSize="20sp" />
     </RelativeLayout>

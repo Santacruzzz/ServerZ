@@ -8,6 +8,7 @@ import static pl.tmkd.serverz.sq.msg.Utils.isServerInList;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;

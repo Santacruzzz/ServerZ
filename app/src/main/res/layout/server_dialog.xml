@@ -67,7 +67,7 @@
             android:textAllCaps="false"
             android:text="@string/save"
             android:textColor="@color/white"
-            android:background="@color/purple_700"
+            android:backgroundTint="@color/purple_700"
             android:textSize="20sp" />
 
         <Button
@@ -78,8 +78,8 @@
             android:layout_toEndOf="@id/saveButton"
             android:textAllCaps="false"
             android:text="@string/dismiss"
+            android:backgroundTint="@color/purple_700"
             android:textColor="@color/purple_200"
-            android:background="@color/purple_700"
             android:textSize="20sp" />
     </RelativeLayout>
 
