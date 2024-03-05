@@ -38,7 +38,7 @@ import pl.tmkd.serverz.sq.RefreshType;
 import pl.tmkd.serverz.sq.Server;
 import pl.tmkd.serverz.sq.ServerAddress;
 
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
+public class MainActivity extends Activity {
     private ListView serversView;
     private ServersAdapter serversAdapter;
     private ArrayList<Server> servers;
@@ -56,7 +56,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         serversAdapter = new ServersAdapter(this, servers);
         serversView = findViewById(R.id.idServersView);
         emptyServers = findViewById(R.id.emptyServers);
-        serversView.setOnItemClickListener(this);
+        serversView.setOnItemClickListener(this::onServerClick);
         serversView.setAdapter(serversAdapter);
         registerForContextMenu(serversView);
         loadServers();
@@ -80,8 +80,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onServerClick(AdapterView<?> parent, View view, int position, long id) {
         Server server = servers.get(position);
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
         saveServerDataInIntent(server, intent);
