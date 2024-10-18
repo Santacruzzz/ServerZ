@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Objects;
 
 import pl.tmkd.serverz.sq.Mod;
 
@@ -28,12 +30,20 @@ public class ServerRulesResponse extends ParsedResponse {
 
         ByteBuffer filteredModsBuffer = replaceEscapeBytes(readModsPayload(payload));
         short protocolVersion = (short) (filteredModsBuffer.get() & 0xFF);
-        filteredModsBuffer.position(filteredModsBuffer.position() + 3);
+        filteredModsBuffer.position(filteredModsBuffer.position() + 1);
+
+        long dlcFlags = getBytes(filteredModsBuffer, 2);
+        BitSet dlcBits = BitSet.valueOf(new long[]{dlcFlags});
+        int bitsToSkipDlcHashes = dlcBits.cardinality() * 4;
+
+        filteredModsBuffer.position(filteredModsBuffer.position() + bitsToSkipDlcHashes);
         short numOfMods = (short) (filteredModsBuffer.get() & 0xFF);
 
-        Log.i(TAG_SERVER, "numOfMods: " + numOfMods);
-        Log.i(TAG_SERVER, "numOfRules: " + numOfRules);
-        Log.i(TAG_SERVER, "protocolVersion: " + protocolVersion);
+        Log.d(TAG_SERVER, "numOfMods: " + numOfMods);
+        Log.d(TAG_SERVER, "numOfRules: " + numOfRules);
+        Log.d(TAG_SERVER, "protocolVersion: " + protocolVersion);
+        Log.d(TAG_SERVER, "dlcBits.cardinality(): " + dlcBits.cardinality());
+        Log.d(TAG_SERVER, "bitsToSkipDlcHashes: " + bitsToSkipDlcHashes);
 
         for (int i = 0; i < numOfMods; i++) {
             long hash = filteredModsBuffer.getInt();
