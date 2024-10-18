@@ -1,6 +1,7 @@
 package pl.tmkd.serverz.sq.msg;
 
 import static java.lang.Math.min;
+import static pl.tmkd.serverz.sq.Constants.TAG_SERVER;
 import static pl.tmkd.serverz.sq.Constants.TAG_SQ;
 import static pl.tmkd.serverz.sq.msg.Utils.getBytes;
 import static pl.tmkd.serverz.sq.msg.Utils.getIndexOfByte;
@@ -30,11 +31,16 @@ public class ServerRulesResponse extends ParsedResponse {
         filteredModsBuffer.position(filteredModsBuffer.position() + 3);
         short numOfMods = (short) (filteredModsBuffer.get() & 0xFF);
 
+        Log.i(TAG_SERVER, "numOfMods: " + numOfMods);
+        Log.i(TAG_SERVER, "numOfRules: " + numOfRules);
+        Log.i(TAG_SERVER, "protocolVersion: " + protocolVersion);
+
         for (int i = 0; i < numOfMods; i++) {
             long hash = filteredModsBuffer.getInt();
             short steamIdSize = (short) (filteredModsBuffer.get() & 0xFF);
             long steamId = getBytes(filteredModsBuffer, steamIdSize);
             String name = readSizedString(filteredModsBuffer);
+            Log.i(TAG_SERVER, "mod name: " + name);
             mods.add(new Mod(steamId, name));
         }
     }
@@ -82,7 +88,11 @@ public class ServerRulesResponse extends ParsedResponse {
                 payload.position(payload.position() - 1);
             }
         }
-        result.put(payload.get());
+        Log.i(TAG_SERVER, "payload remaining: " + payload.remaining());
+        if (payload.hasRemaining())
+        {
+            result.put(payload.get());
+        }
         result.flip();
         return result;
     }

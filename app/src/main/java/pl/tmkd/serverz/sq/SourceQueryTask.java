@@ -72,15 +72,18 @@ public class SourceQueryTask implements Runnable {
                 handleResponse(sendRequest(a2sPlayer));
                 if (!hasRefreshedMods)
                 {
-                    handleResponse(sendRequest(a2sRules));
+                    try {
+                        handleResponse(sendRequest(a2sRules));
+                    } catch (Exception e) {
+                        Log.e(TAG_SQ, Log.getStackTraceString(e));
+                    }
                 }
             }
             if (null != listener)
                 listener.onServerInfoResponse(infoResp, playerResp, rulesResponse);
             resetResponses();
         } catch (Exception e) {
-            Log.e(TAG_SQ, address + " :: Task failed, msg: " + e.getMessage());
-            Log.e(TAG_SQ, Arrays.toString(e.getStackTrace()));
+            Log.e(TAG_SQ, Log.getStackTraceString(e));
             listener.onServerRefreshFailed();
         }
     }
