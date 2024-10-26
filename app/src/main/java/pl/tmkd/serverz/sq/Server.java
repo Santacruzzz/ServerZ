@@ -28,6 +28,9 @@ import pl.tmkd.serverz.sq.msg.ServerRulesResponse;
 public class Server implements SqResponseListener, Runnable{
     private String ip;
     private int port;
+    private LocalTime sunriseTime;
+    private LocalTime sunsetTime;
+
     private final ExecutorService executor;
     private final SourceQueryTask refreshServerDataTask;
     private ServerListener listener;
@@ -59,6 +62,8 @@ public class Server implements SqResponseListener, Runnable{
     public Server(String ip, int port, RefreshType refreshType) {
         this.ip = ip;
         this.port = port;
+        sunriseTime = LocalTime.of(5, 0, 0);
+        sunsetTime = LocalTime.of(19, 0, 0);
         players = new ArrayList<>();
         mods = new ArrayList<>();
         refreshServerDataTask = new SourceQueryTask(ip, port, refreshType);
@@ -185,7 +190,6 @@ public class Server implements SqResponseListener, Runnable{
     private void store(@NonNull ServerInfoResponse response) {
         refreshFailed = false;
         refreshSucceeded = true;
-
         name = response.getName();
         map = response.getMap();
         version = response.getVersion();
@@ -229,25 +233,25 @@ public class Server implements SqResponseListener, Runnable{
     private void calculateMinutesTillSunsetOrSunrise() {
         ingameMinutesToSunriseOrSunset = 0;
         if (isDaytime()) {
-            ingameMinutesToSunriseOrSunset = ChronoUnit.MINUTES.between(serverTime, SUNSET_TIME);
+            ingameMinutesToSunriseOrSunset = ChronoUnit.MINUTES.between(serverTime, sunsetTime);
             tillSunsetOrSunrise = formatDayDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / dayTimeMult)));
         } else {
-            if (serverTime.isAfter(SUNSET_TIME)) {
+            if (serverTime.isAfter(sunsetTime)) {
                 ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, LocalTime.MIDNIGHT.minus(Duration.ofSeconds(1)));
-                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(LocalTime.MIDNIGHT, SUNRISE_TIME);
+                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(LocalTime.MIDNIGHT, sunriseTime);
             } else {
-                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, SUNRISE_TIME);
+                ingameMinutesToSunriseOrSunset += ChronoUnit.MINUTES.between(serverTime, sunriseTime);
             }
             tillSunsetOrSunrise = formatDayDuration(Duration.ofMinutes((long) (ingameMinutesToSunriseOrSunset / (dayTimeMult * nightTimeMult))));
         }
     }
 
     private void setDayOrNightTime() {
-        isDaytime = (serverTime.isAfter(SUNRISE_TIME) || serverTime == SUNRISE_TIME) && serverTime.isBefore(SUNSET_TIME);
+        isDaytime = (serverTime.isAfter(sunriseTime) || serverTime == sunriseTime) && serverTime.isBefore(sunsetTime);
     }
 
     private void calculateDayAndNightDuration() {
-        long daytimeMinutes = ChronoUnit.MINUTES.between(SUNRISE_TIME, SUNSET_TIME);
+        long daytimeMinutes = ChronoUnit.MINUTES.between(sunriseTime, sunsetTime);
         long nighttimeMinutes = 24 * 60 - daytimeMinutes;
 
         dayDuration = formatDayDuration(Duration.ofMinutes((long) (daytimeMinutes / dayTimeMult)));
@@ -267,6 +271,10 @@ public class Server implements SqResponseListener, Runnable{
     public String getIp() { return ip; }
 
     public int getPort() { return port; }
+
+    public LocalTime getSunriseTime() { return sunriseTime; }
+
+    public  LocalTime getSunsetTime() { return sunsetTime; }
 
     public String getName() {
         return name;
@@ -336,8 +344,17 @@ public class Server implements SqResponseListener, Runnable{
         resetRetries();
     }
 
+    public void setSunriseTime(int newSunriseTime) {
+        sunriseTime = LocalTime.of(newSunriseTime, 0, 0);
+    }
+
+    public void setSunsetTime(int newSunsetTime) {
+        sunsetTime = LocalTime.of(newSunsetTime, 0, 0);
+    }
+
     public int getDayOrNightProgress() {
-        double minutesInDay = ChronoUnit.MINUTES.between(SUNRISE_TIME, SUNSET_TIME);
+        Log.d(TAG_SERVER, "sunrise " + sunriseTime + " sunsetTime "+ sunsetTime);
+        double minutesInDay = ChronoUnit.MINUTES.between(sunriseTime, sunsetTime);
         double minutesInNight = 24 * 60 - minutesInDay;
 
         if (isDaytime()) {

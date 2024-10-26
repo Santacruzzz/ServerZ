@@ -82,6 +82,8 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         Intent intent = getIntent();
         String ip = intent.getStringExtra("ip");
         int port = intent.getIntExtra("port", 0);
+        int sunriseTime = intent.getIntExtra("sunrise", 0);
+        int sunsetTime = intent.getIntExtra("sunset", 0);
         String serverName = intent.getStringExtra("name");
         String address = intent.getStringExtra("address");
         int numberOfPlayers = intent.getIntExtra("amountOfPlayers", 0);
@@ -95,6 +97,8 @@ public class SecondActivity extends AppCompatActivity implements ServerListener,
         boolean hasRefreshSucceeded = intent.getBooleanExtra("hasRefreshSucceeded", false);
 
         server = new Server(ip, port, RefreshType.FULL);
+        server.setSunriseTime(sunriseTime);
+        server.setSunsetTime(sunsetTime);
         showServerData(serverName, address, numberOfPlayers, maxPlayers, serverTime, dayDuration, nightDuration,
                 durationTillSunriseOrSunset, isDayTime, dayOrNightProgress, hasRefreshSucceeded);
         server.setListener(this);

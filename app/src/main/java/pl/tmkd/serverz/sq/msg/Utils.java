@@ -145,6 +145,8 @@ public class Utils {
         intent.putExtra("ip", server.getIp());
         intent.putExtra("port", server.getPort());
         intent.putExtra("name", server.getName());
+        intent.putExtra("sunrise", server.getSunriseTime().getHour());
+        intent.putExtra("sunset", server.getSunsetTime().getHour());
         intent.putExtra("address", server.getAddress());
         intent.putExtra("amountOfPlayers", server.getPlayersNum());
         intent.putExtra("maxPlayersNum", server.getMaxPlayers());
