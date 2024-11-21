@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -18,11 +18,30 @@
             android:layout_height="wrap_content"
             android:text="Server name"
             android:paddingTop="8dp"
-            android:paddingBottom="12dp"
+            android:paddingBottom="6dp"
             android:paddingHorizontal="6dp"
             android:textColor="@android:color/white"
             android:textSize="20dp"
             android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="end"
+            android:text="Server map"
+            android:textColor="@color/server_item_detail_item_color"
+            android:textSize="15dp" />
 
     </LinearLayout>
 
@@ -62,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
-            android:width="@dimen/server_item_details_item_width"
+            android:width="70dp"
             android:drawableLeft="@drawable/baseline_camera_alt_24"
             android:drawablePadding="@dimen/icon_padding"
             android:text="00"
@@ -70,16 +89,14 @@
             android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/map"
-            android:layout_width="0dp"
+            android:id="@+id/version"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingStart="8dp"
             android:layout_weight="1"
-            android:gravity="end"
-            android:text="Server map"
+            android:text="Version"
             android:textColor="@color/server_item_detail_item_color"
-            android:textSize="15dp"
-            android:layout_gravity="center"/>
-
+            android:textSize="15dp" />
     </LinearLayout>
 
 </LinearLayout>

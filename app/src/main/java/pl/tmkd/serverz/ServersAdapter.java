@@ -50,6 +50,7 @@ public class ServersAdapter extends BaseAdapter implements ServerListener {
         TextView map = convertView.findViewById(R.id.map);
         TextView time = convertView.findViewById(R.id.serverTime);
         TextView firstPerson = convertView.findViewById(R.id.isFirstPerson);
+        TextView version = convertView.findViewById(R.id.version);
         LinearLayout mainLayout = convertView.findViewById(R.id.serverItemBackground);
 
         Server server = arrayList.get(position);
@@ -57,6 +58,7 @@ public class ServersAdapter extends BaseAdapter implements ServerListener {
         playersNum.setText(server.getPlayersNum() + "/" + server.getMaxPlayers());
         time.setText(server.getServerTime());
         firstPerson.setText(server.isFirstPerson() ? "1pp" : "3pp");
+        version.setText(server.getVersion());
         map.setText(server.getMap());
         if (server.hasRefreshFailed()) {
             mainLayout.setBackgroundResource(R.color.failed_server_background);
